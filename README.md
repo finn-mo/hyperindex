@@ -23,11 +23,11 @@ source venv/bin/activate  # On Windows: .\venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-*Note: [pip-tools](https://github.com/jazzband/pip-tools) is only needed if you're modifying dependencies.*
 To update `requirements.txt`, modify `requirements.in` and run:
 ```bash
 pip-compile
 ```
+*(Note: [pip-tools](https://github.com/jazzband/pip-tools) is required to modify dependencies.)*
 
 ## Usage
 ```bash
