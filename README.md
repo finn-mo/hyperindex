@@ -1,0 +1,61 @@
+# Hyperindex — A CLI-based Rolodex for the web
+Hyperindex allows you to bookmark, tag, and preserve the most useful parts of the internet. Build your own personal web archive with full-page snapshots and Wayback Machine links, and browse your curated index of sites.
+
+## Features
+- Save full-page offline snapshots with `pywebcopy`
+- Backup URLs to the Wayback Machine using `waybackpy`
+- Organize links with tags, descriptions, and timestamps
+- Search entries by keywords or tags
+- Soft-delete entries with restore and purge support
+- Export entries to JSON or CSV (optionally including deleted)
+- Browse snapshots locally via the `view` command
+- Track tag usage frequency via `tags` report
+
+## Installation
+```bash
+git clone https://github.com/yourusername/hyperindex.git
+cd hyperindex
+python -m venv venv
+source venv/bin/activate  # On Windows: .\venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+*Note: [pip-tools](https://github.com/jazzband/pip-tools) is only needed if you're modifying dependencies.*
+To update `requirements.txt`, modify `requirements.in` and run:
+```bash
+pip-compile
+```
+
+## Usage
+```bash
+python main.py [COMMAND] [OPTIONS]
+```
+
+Entry management:
+- `add <url> <title> [--tags TAGS] [--desc TEXT] [--strategy STRATEGY]`: Add and archive a new entry
+  - `--strategy STRATEGY`: Archive methods (e.g. `pywebcopy`, `wayback`, or `none`)
+- `update <id> [--title TEXT] [--tags TAGS] [--desc TEXT] [--add-tags TAGS] [--remove-tags TAGS]`: Modify an entry
+- `delete <id>`: Soft-delete an entry
+- `restore <id>`: Restore a soft-deleted entry
+- `list [--include-deleted]`: List all active entries
+- `view <id>`: Open the local archived snapshot
+
+Search and metadata:
+- `search [--query TEXT] [--tag TAG]`
+- `tags`: List all tags with usage counts
+
+Trash handling:
+- `trash`: View deleted entries
+- `purge`: Permanently delete all soft-deleted entries
+
+Export:
+- `export --format [json|csv] [--include-deleted]`: Export entries
+
+## Data Storage
+Hyperindex saves data to:
+- `~/.hyperindex/rolodex.db`
+- `~/.hyperindex/snapshots/`
+- `~/.hyperindex/exports/`
+
+## License
+[![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
