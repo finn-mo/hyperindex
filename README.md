@@ -67,4 +67,4 @@ Hyperindex saves data to:
 - Web frontend for a curated "Internet Yellowpages" based on user submissions
 
 ## License
-Licensed under the [MIT License](LICENSE)
+Licensed under the [MIT License](LICENSE).
