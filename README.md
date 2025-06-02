@@ -1,7 +1,8 @@
 # Hyperindex – CLI-based internet Rolodex
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE) [![Python Version](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/) [![Last Commit](https://img.shields.io/github/last-commit/finn-mo/hyperindex.svg)](https://github.com/finn-mo/hyperindex/commits/main)
-
-Hyperindex allows you to bookmark, tag, and preserve the most useful parts of the internet. Build your own personal web archive with full-page snapshots and Wayback Machine links, and browse your curated index of sites.
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Python Version](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/)
+[![Last Commit](https://img.shields.io/github/last-commit/finn-mo/hyperindex.svg)](https://github.com/finn-mo/hyperindex/commits/main)  
+Hyperindex lets you build a personal web directory from the command line. Bookmark and tag important sites, archive full-page snapshots and Wayback Machine links, and browse your curated index offline.
 
 ## Features
 - Save full-page offline snapshots with `pywebcopy`
