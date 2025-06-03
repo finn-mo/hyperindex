@@ -13,3 +13,26 @@ __pycache__/
 
 # macOS
 .DS_Store
+
+# pytest
+.pytest_cache/
+
+# Test coverage reports
+htmlcov/
+.coverage
+.coverage.*
+
+# Python build artifacts
+*.egg-info/
+dist/
+build/
+
+# Environment variables or local overrides
+.env
+.env.*
+
+# Logs
+*.log
+
+# Server database
+server/data/*.db

@@ -1,4 +1,6 @@
 pywebcopy
 waybackpy
 click
-
+fastapi
+pydantic
+uvicorn

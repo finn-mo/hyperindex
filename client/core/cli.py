@@ -1,13 +1,15 @@
 from datetime import datetime, timezone
 from pathlib import Path
+import requests
 from urllib.parse import urlparse
 import webbrowser
 
 import click
 
-from core.archive import archive_url
-from core.models import Entry
-from core.storage import (
+from client.core.archive import archive_url
+from client.core.config import Config
+from client.core.models import Entry
+from client.core.storage import (
     add_entry,
     count_tags,
     delete_entry,
@@ -189,3 +191,25 @@ def view(entry_id):
     snapshot_path = matches[0]
     webbrowser.open(snapshot_path.as_uri())
     click.echo("Opened in browser.")
+
+
+@cli.command()
+@click.argument("entry_id", type=int)
+def push(entry_id):
+    """Push a local entry to the remote Yellowpages server."""
+    entry = get_entry(entry_id)
+    if not entry:
+        click.echo("Entry not found.")
+        return
+    payload = {
+        "url": entry.url,
+        "title": entry.title,
+        "tags": entry.tags,
+        "description": entry.description
+    }
+    try:
+        response = requests.post(f"{Config.API_URL}/entries", json=payload)
+        response.raise_for_status()
+        click.echo(f"Pushed: {entry.title}")
+    except requests.RequestException as e:
+        click.echo(f"Failed to push entry: {e}")

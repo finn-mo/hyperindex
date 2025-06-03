@@ -11,6 +11,8 @@ class Config:
 
     ALLOWED_STRATEGIES = {"none", "pywebcopy", "wayback"}
 
+    API_URL = os.getenv("HYPERINDEX_API_URL", "http://localhost:8000")
+
     @classmethod
     def init_paths(cls):
         cls.BASE_DIR.mkdir(parents=True, exist_ok=True)

@@ -1,0 +1,42 @@
+import pytest
+
+from server.crud.entries import create_entry, update_entry, get_entry_by_id
+from server.models.schemas import EntryIn
+
+pytestmark = pytest.mark.crud
+
+
+def test_create_and_get_entry(temp_db):
+    entry = EntryIn(
+        url="https://example.com",
+        title="Example",
+        tags=["test", "sample"],
+        description="Test entry"
+    )
+    created = create_entry(entry)
+    assert created.id is not None
+
+    fetched = get_entry_by_id(created.id)
+    assert fetched is not None
+    assert fetched.url == entry.url
+    assert "test" in fetched.tags
+
+
+def test_update_entry(temp_db):
+    entry = EntryIn(
+        url="https://update.com",
+        title="Before Update",
+        tags=["old"],
+        description="Before"
+    )
+    created = create_entry(entry)
+    updated = EntryIn(
+        url="https://update.com",
+        title="After Update",
+        tags=["new"],
+        description="After"
+    )
+    result = update_entry(created.id, updated)
+    assert result is not None
+    assert result.title == "After Update"
+    assert "new" in result.tags

@@ -5,8 +5,8 @@ from pathlib import Path
 import sqlite3
 from typing import Optional
 
-from core.config import Config
-from core.models import Entry
+from client.core.config import Config
+from client.core.models import Entry
 
 
 def get_conn(db_path: Optional[str] = None) -> sqlite3.Connection:

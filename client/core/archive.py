@@ -4,7 +4,7 @@ from typing import Iterable
 from pywebcopy import save_webpage
 from waybackpy import WaybackMachineSaveAPI
 
-from core.config import Config
+from client.core.config import Config
 
 
 def archive_with_pywebcopy(url: str) -> dict[str, str]:
