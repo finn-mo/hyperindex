@@ -33,6 +33,9 @@ form {
     background: #fff8c6;
     padding: 0.5rem;
     border: 1px solid #aaa;
+    display: flex;
+    gap: 0.25rem; /* space between input and buttons */
+    align-items: center;
 }
 
 input[type="text"] {
@@ -41,7 +44,7 @@ input[type="text"] {
     border: 1px solid #666;
     background: #fff;
     font-size: 0.85rem;
-    width: 60%;
+    flex: 1;
 }
 
 button,

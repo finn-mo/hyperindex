@@ -2,12 +2,13 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python Version](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/)
 [![Last Commit](https://img.shields.io/github/last-commit/finn-mo/hyperindex.svg)](https://github.com/finn-mo/hyperindex/commits/main)  
-Hyperindex lets you build a personal web directory from the command line. Bookmark and tag important sites, archive full-page snapshots and Wayback Machine links, browse your curated index offline or push to the Hyperindex server powered by the built-in REST API.
+Hyperindex lets you build a personal internet directory from the command line and browse a shared, user-curated index through a lightweight web interface. Bookmark and tag important sites, archive full-page snapshots and Wayback Machine links, browse your curated index offline or push to the Hyperindex server and browse all user entries.
 
 ## Features
 Hyperindex consists of:
 - A local CLI client (`client/`) for bookmarking, archiving, and managing entries
 - REST API server (`server/`) for syncing and retrieving entries remotely
+- A lightweight web interface for browsing and searching entries
 
 ### CLI Client
 - Save full-page offline snapshots with `pywebcopy`
@@ -25,6 +26,12 @@ Hyperindex consists of:
 - Accepts entries from CLI (`POST /entries`)
 - Lists all entries (`GET /entries`)
 - Retrieves specific entries (`GET /entries/{id}`)
+
+### Web Interface
+- Access a shared directory view from your browser at `http://localhost:8000/`
+- Search entries by keyword or tag
+- Navigate paginated results
+- Highlights matching tags and descriptions
 
 ## Installation
 ```bash
@@ -73,6 +80,7 @@ Start the server:
 ```bash
 uvicorn server.main:app --reload
 ```
+Once running, visit `http://localhost:8000/` in your browser to access the web interface.
 
 Example requests:
 ```bash
@@ -96,9 +104,9 @@ Hyperindex saves data to:
 - `server/data/yellowpages.db` (configurable via `HYPERINDEX_SERVER_DB`)
 
 ## Roadmap
-- Web frontend for a curated "Internet Yellowpages" based on user submissions
-- Client-side PDF/image archival support
+- Migrate Rolodex functionality from CLI to a full-featured web interface
 - Advanced REST API auth (OAuth, user-specific roles)
+- PDF/image archival support
 - Server-side tag management enhancements
 
 ## Testing
