@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hyperindex Directory</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <h1>Hyperindex Directory</h1>
+    <form method="get" action="/">
+        <label for="q" style="display:none;">Search</label>
+        <input id="q" type="text" name="q" value="{{ query or '' }}" placeholder="Search entries...">
+        <button type="submit">Search</button>
+
+        {% if query %}
+            <a href="/" class="clear-btn">Clear</a>
+        {% endif %}
+    </form>
+    {% if query %}
+    <p><strong>{{ entries|length }}</strong> entries found for "<em>{{ query }}</em>"</p>
+    {% else %}
+    <p><strong>{{ entries|length }}</strong> entries total</p>
+    {% endif %}
+    {% for entry in entries %}
+    <div class="card">
+        <h2><a href="{{ entry.url }}" target="_blank">{{ entry.title }}</a></h2>
+        <div class="tags">
+            {% for tag in entry.tags %}
+            <span>{{ tag }}</span>
+            {% endfor %}
+        </div>
+        {% if entry.description %}
+        <div class="desc">{{ entry.description | e }}</div>
+        {% endif %}
+    </div>
+    {% else %}
+    <p>No entries found.</p>
+    {% endfor %}
+</body>
+</html>

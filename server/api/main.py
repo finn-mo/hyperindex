@@ -2,6 +2,10 @@ from contextlib import asynccontextmanager
 from typing import Optional
 
 from fastapi import Depends, FastAPI, HTTPException, Query
+from fastapi.templating import Jinja2Templates
+from fastapi.requests import Request
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
 
 from server.db.connection import init_db
 from server.crud.entries import (
@@ -15,6 +19,8 @@ from server.models.schemas import EntryIn, EntryOut
 from server.security.auth import verify_token
 
 
+templates = Jinja2Templates(directory="server/templates")
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     init_db()
@@ -22,6 +28,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="Hyperindex API", lifespan=lifespan)
 
+app.mount("/static", StaticFiles(directory="server/static"), name="static")
 
 @app.post("/entries", response_model=EntryOut, dependencies=[Depends(verify_token)])
 def create_entry_api(entry_in: EntryIn):
@@ -70,3 +77,22 @@ def delete_entry_api(entry_id: int):
 @app.get("/health")
 def health_check():
     return {"status": "ok"}
+
+@app.get("/", response_class=HTMLResponse)
+def read_index(request: Request, q: Optional[str] = Query(None)):
+    entries = get_all_entries()
+    
+    if q:
+        q_lower = q.lower()
+        entries = [
+            e for e in entries
+            if q_lower in e.title.lower()
+            or q_lower in e.description.lower()
+            or any(q_lower in tag.lower() for tag in e.tags)
+        ]
+
+    return templates.TemplateResponse("index.html", {
+        "request": request,
+        "entries": entries,
+        "query": q
+    })
