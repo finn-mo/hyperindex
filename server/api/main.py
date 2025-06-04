@@ -82,6 +82,29 @@ def health_check():
     return {"status": "ok"}
 
 
+def build_page_range(page: int, total_pages: int) -> list:
+    if total_pages <= 7:
+        return list(range(1, total_pages + 1))
+
+    range_list = []
+
+    if page > 3:
+        range_list.append(1)
+        if page > 4:
+            range_list.append("...")
+
+    start = max(2, page - 1)
+    end = min(total_pages - 1, page + 1)
+    range_list.extend(range(start, end + 1))
+
+    if page < total_pages - 2:
+        if page < total_pages - 3:
+            range_list.append("...")
+        range_list.append(total_pages)
+
+    return range_list
+
+
 # WEB FRONTEND ROUTE
 @app.get("/", response_class=HTMLResponse)
 def home(
@@ -93,7 +116,6 @@ def home(
     offset = (page - 1) * limit
 
     if q:
-        # Fetch all then filter manually (if search affects content)
         all_entries = get_all_entries(limit=10000, offset=0)
         filtered = [
             e for e in all_entries
@@ -107,6 +129,9 @@ def home(
         total = get_entry_count()
         entries = get_all_entries(limit=limit, offset=offset)
 
+    total_pages = ceil(total / limit)
+    page_range = build_page_range(page, total_pages)
+
     return templates.TemplateResponse("index.html", {
         "request": request,
         "entries": entries,
@@ -114,6 +139,8 @@ def home(
         "page": page,
         "limit": limit,
         "total": total,
+        "total_pages": total_pages,
+        "page_range": page_range,
         "has_prev": page > 1,
-        "has_next": page * limit < total,
+        "has_next": page < total_pages,
     })

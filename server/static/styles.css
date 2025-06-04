@@ -129,30 +129,32 @@ hr {
 }
 
 .pagination {
-    margin-top: 1rem;
+    margin: 1rem 0;
     text-align: center;
 }
 
-.page-link {
+.page-link, .pagination strong {
+    display: inline-block;
     margin: 0 4px;
-    text-decoration: none;
     padding: 4px 8px;
-    background: #ffe066;
-    border: 1px solid #aaa;
+    border: 1px solid #999;
+    background-color: #fff8c6;
     color: #000;
-    font-size: 0.85rem;
+    text-decoration: none;
+    font-weight: bold;
 }
 
 .page-link:hover {
-    background: #ffd700;
+    background-color: #ffd700;
 }
 
-.current-page {
-    margin: 0 4px;
+.pagination strong {
+    background-color: #ffe066;
+    border: 1px solid #888;
+}
+
+.page-ellipsis {
+    margin: 0 6px;
+    color: #666;
     font-weight: bold;
-    padding: 4px 8px;
-    background: #004080;
-    color: #fff;
-    border: 1px solid #004080;
-    font-size: 0.85rem;
 }
