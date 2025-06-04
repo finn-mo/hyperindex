@@ -41,15 +41,15 @@ pip-compile
 ```
 *(Requires [pip-tools](https://github.com/jazzband/pip-tools))*
 
-## CLI Usage
+## Usage
+### CLI
 From the `client/` directory or via `python -m client.main`:
 ```bash
 python -m client.main [COMMAND] [OPTIONS]
 ```
 
 Entry management:
-- `add <url> <title> [--tags TAGS] [--desc TEXT] [--strategy STRATEGY]`: Add and archive a new entry
-  - `--strategy STRATEGY`: Archive methods (e.g. `pywebcopy`, `wayback`, or `none`)
+- `add <url> <title> [--tags TAGS] [--desc TEXT] [--strategy STRATEGY]`: Add and archive a new entry (`STRATEGY` can be `pywebcopy`, `wayback`, or `none`)
 - `update <id> [--title TEXT] [--tags TAGS] [--desc TEXT] [--add-tags TAGS] [--remove-tags TAGS]`: Modify an entry
 - `delete <id>`: Soft-delete an entry
 - `restore <id>`: Restore a soft-deleted entry
@@ -64,24 +64,21 @@ Trash handling:
 - `trash`: View deleted entries
 - `purge`: Permanently delete all soft-deleted entries
 
-Export:
+Export and share:
 - `export --format [json|csv] [--include-deleted]`: Export entries
-
-Server Interaction:
 - `push <id>`: Push local entry to the Hyperindex server (`POST /entries`)
 
-## API Testing
-Once the server is running (`uvicorn server.main:app --reload`), you can test it:
-
+### API
+Start the server:
 ```bash
-# List entries
-curl http://localhost:8000/entries
+uvicorn server.main:app --reload
+```
 
-# View one entry
-curl http://localhost:8000/entries/1
-
-# Add a new entry
-http POST http://localhost:8000/entries \
+Example requests:
+```bash
+curl http://localhost:8000/entries            # List entries
+curl http://localhost:8000/entries/1          # View one entry
+http POST http://localhost:8000/entries \     # Add a new entry
     url="https://example.com" \
     title="Example Site" \
     tags:='["reference", "sample"]' \
