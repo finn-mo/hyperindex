@@ -52,10 +52,18 @@ def fetch_entry_by_id(entry_id: int) -> Optional[EntryDTO]:
         return entry_from_row(row) if row else None
 
 
-def fetch_all_entries() -> list[EntryDTO]:
+def fetch_all_entries(limit: int, offset: int) -> list[EntryDTO]:
     with get_conn() as conn:
-        rows = conn.execute("SELECT * FROM entries ORDER BY id").fetchall()
+        rows = conn.execute(
+            "SELECT * FROM entries ORDER BY id LIMIT ? OFFSET ?", (limit, offset)
+        ).fetchall()
         return [entry_from_row(row) for row in rows]
+
+
+def count_entries() -> int:
+    with get_conn() as conn:
+        result = conn.execute("SELECT COUNT(*) FROM entries").fetchone()
+        return result[0] if result else 0
 
 
 def delete_entry_by_id(entry_id: int) -> bool:

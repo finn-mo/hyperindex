@@ -6,7 +6,8 @@ from server.db.entries import (
     fetch_entry_by_id,
     fetch_all_entries,
     delete_entry_by_id,
-    update_entry_by_id
+    update_entry_by_id,
+    count_entries
 )
 from server.models.dto import EntryDTO
 from server.models.schemas import EntryIn
@@ -35,8 +36,12 @@ def get_entry_by_id(entry_id: int) -> Optional[EntryDTO]:
     return fetch_entry_by_id(entry_id)
 
 
-def get_all_entries() -> list[EntryDTO]:
-    return fetch_all_entries()
+def get_all_entries(limit: int, offset: int) -> list[EntryDTO]:
+    return fetch_all_entries(limit=limit, offset=offset)
+
+
+def get_entry_count() -> int:
+    return count_entries()
 
 
 def delete_entry(entry_id: int) -> bool:

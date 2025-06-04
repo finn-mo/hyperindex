@@ -1,4 +1,5 @@
 from contextlib import asynccontextmanager
+from math import ceil
 from typing import Optional
 
 from fastapi import Depends, FastAPI, HTTPException, Query
@@ -14,10 +15,10 @@ from server.crud.entries import (
     get_entry_by_id,
     update_entry,
     delete_entry,
+    get_entry_count
 )
 from server.models.schemas import EntryIn, EntryOut
 from server.security.auth import verify_token
-
 
 templates = Jinja2Templates(directory="server/templates")
 
@@ -27,9 +28,10 @@ async def lifespan(app: FastAPI):
     yield
 
 app = FastAPI(title="Hyperindex API", lifespan=lifespan)
-
 app.mount("/static", StaticFiles(directory="server/static"), name="static")
 
+
+# API ROUTES
 @app.post("/entries", response_model=EntryOut, dependencies=[Depends(verify_token)])
 def create_entry_api(entry_in: EntryIn):
     dto = create_entry(entry_in)
@@ -39,15 +41,16 @@ def create_entry_api(entry_in: EntryIn):
 @app.get("/entries", response_model=list[EntryOut], dependencies=[Depends(verify_token)])
 def list_entries(
     tag: Optional[str] = Query(None),
-    limit: int = Query(50, ge=1, le=100),
-    offset: int = Query(0, ge=0)
+    page: int = Query(1, ge=1),
+    limit: int = Query(10, ge=1, le=50)
 ):
-    dtos = get_all_entries()
-    filtered = [
-        dto for dto in dtos
-        if not tag or tag in dto.tags
-    ]
-    return [dto.to_entry_out() for dto in filtered[offset:offset + limit]]
+    offset = (page - 1) * limit
+    dtos = get_all_entries(limit=limit, offset=offset)
+
+    if tag:
+        dtos = [dto for dto in dtos if tag in dto.tags]
+
+    return [dto.to_entry_out() for dto in dtos]
 
 
 @app.get("/entries/{entry_id}", response_model=EntryOut)
@@ -78,37 +81,31 @@ def delete_entry_api(entry_id: int):
 def health_check():
     return {"status": "ok"}
 
+
+# WEB FRONTEND ROUTE
 @app.get("/", response_class=HTMLResponse)
-def read_index(request: Request, q: Optional[str] = Query(None)):
-    entries = get_all_entries()
-    
+def home(
+    request: Request,
+    q: Optional[str] = None,
+    page: int = 1,
+    limit: int = 10
+):
+    offset = (page - 1) * limit
+
     if q:
-        q_lower = q.lower()
-        entries = [
-            e for e in entries
-            if q_lower in e.title.lower()
-            or q_lower in e.description.lower()
-            or any(q_lower in tag.lower() for tag in e.tags)
+        # Fetch all then filter manually (if search affects content)
+        all_entries = get_all_entries(limit=10000, offset=0)
+        filtered = [
+            e for e in all_entries
+            if q.lower() in e.title.lower()
+            or q.lower() in e.description.lower()
+            or any(q.lower() in tag.lower() for tag in e.tags)
         ]
-
-    return templates.TemplateResponse("index.html", {
-        "request": request,
-        "entries": entries,
-        "query": q
-    })
-
-
-@app.get("/", response_class=HTMLResponse)
-def home(request: Request, q: Optional[str] = None, page: int = 1, limit: int = 25):
-    all_entries = get_all_entries()
-
-    if q:
-        all_entries = [e for e in all_entries if q.lower() in e.title.lower() or q.lower() in e.description.lower()]
-    
-    total = len(all_entries)
-    start = (page - 1) * limit
-    end = start + limit
-    entries = all_entries[start:end]
+        total = len(filtered)
+        entries = filtered[offset:offset + limit]
+    else:
+        total = get_entry_count()
+        entries = get_all_entries(limit=limit, offset=offset)
 
     return templates.TemplateResponse("index.html", {
         "request": request,
@@ -118,5 +115,5 @@ def home(request: Request, q: Optional[str] = None, page: int = 1, limit: int = 
         "limit": limit,
         "total": total,
         "has_prev": page > 1,
-        "has_next": end < total,
+        "has_next": page * limit < total,
     })

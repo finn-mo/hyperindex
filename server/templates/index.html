@@ -16,19 +16,13 @@
             <a href="/" class="clear-btn">Clear</a>
         {% endif %}
     </form>
+
     {% if query %}
-    <p><strong>{{ entries|length }}</strong> entries found for "<em>{{ query }}</em>"</p>
+    <p><strong>{{ total }}</strong> entries found for "<em>{{ query }}</em>"</p>
     {% else %}
-    <p><strong>{{ entries|length }}</strong> entries total</p>
+    <p><strong>{{ total }}</strong> entries total</p>
     {% endif %}
-    <div class="pagination">
-        {% if has_prev %}
-            <a href="?q={{ query }}&page={{ page - 1 }}" class="page-link">Previous</a>
-        {% endif %}
-        {% if has_next %}
-            <a href="?q={{ query }}&page={{ page + 1 }}" class="page-link">Next</a>
-        {% endif %}
-    </div>
+
     {% for entry in entries %}
     <div class="card">
         <h2><a href="{{ entry.url }}" target="_blank">{{ entry.title }}</a></h2>
@@ -44,12 +38,22 @@
     {% else %}
     <p>No entries found.</p>
     {% endfor %}
+
     <div class="pagination">
         {% if has_prev %}
-            <a href="?q={{ query }}&page={{ page - 1 }}" class="page-link">Previous</a>
+            <a href="?{% if query %}q={{ query }}&{% endif %}page={{ page - 1 }}" class="page-link">← Prev</a>
         {% endif %}
+
+        {% for p in page_range %}
+            {% if p == page %}
+                <strong class="current-page">{{ p }}</strong>
+            {% else %}
+                <a href="?{% if query %}q={{ query }}&{% endif %}page={{ p }}" class="page-link">{{ p }}</a>
+            {% endif %}
+        {% endfor %}
+
         {% if has_next %}
-            <a href="?q={{ query }}&page={{ page + 1 }}" class="page-link">Next</a>
+            <a href="?{% if query %}q={{ query }}&{% endif %}page={{ page + 1 }}" class="page-link">Next →</a>
         {% endif %}
     </div>
 </body>

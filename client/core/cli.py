@@ -195,20 +195,27 @@ def view(entry_id):
 
 @cli.command()
 @click.argument("entry_id", type=int)
-def push(entry_id):
+@click.option("--token", envvar="HYPERINDEX_TOKEN", help="Bearer token for authentication")
+def push(entry_id, token):
     """Push a local entry to the remote Yellowpages server."""
     entry = get_entry(entry_id)
     if not entry:
         click.echo("Entry not found.")
         return
+
+    headers = {}
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
+
     payload = {
         "url": entry.url,
         "title": entry.title,
         "tags": entry.tags,
         "description": entry.description
     }
+
     try:
-        response = requests.post(f"{Config.API_URL}/entries", json=payload)
+        response = requests.post(f"{Config.API_URL}/entries", json=payload, headers=headers)
         response.raise_for_status()
         click.echo(f"Pushed: {entry.title}")
     except requests.RequestException as e:
