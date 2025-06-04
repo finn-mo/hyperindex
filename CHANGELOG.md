@@ -7,6 +7,7 @@
 - Pytest-based test suite with full coverage of CLI, archiving, server routes, storage, and models
   - Includes marker-based organization (`cli`, `routes`, `db`, `crud`, etc.) and temporary test environments
   - External services like Wayback Machine are mocked
+- Initial `jinja2` web frontend for Hyperindex Yellowpages
 ### Changed
 - Refactored project layout: 
   - Split root directory into `client/` and `server/` to clearly separate the local client application from the backend API server

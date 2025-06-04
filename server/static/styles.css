@@ -127,3 +127,25 @@ hr {
     border-top: 1px solid #ccc;
     margin: 0.5rem 0;
 }
+
+.pagination {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.page-link {
+    font-family: inherit;
+    font-size: 0.85rem;
+    padding: 4px 10px;
+    background-color: #ffe066;
+    border: 1px solid #888;
+    color: #000;
+    text-decoration: none;
+    border-radius: 3px;
+}
+
+.page-link:hover {
+    background-color: #ffd700;
+}

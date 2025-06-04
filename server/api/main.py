@@ -96,3 +96,27 @@ def read_index(request: Request, q: Optional[str] = Query(None)):
         "entries": entries,
         "query": q
     })
+
+
+@app.get("/", response_class=HTMLResponse)
+def home(request: Request, q: Optional[str] = None, page: int = 1, limit: int = 25):
+    all_entries = get_all_entries()
+
+    if q:
+        all_entries = [e for e in all_entries if q.lower() in e.title.lower() or q.lower() in e.description.lower()]
+    
+    total = len(all_entries)
+    start = (page - 1) * limit
+    end = start + limit
+    entries = all_entries[start:end]
+
+    return templates.TemplateResponse("index.html", {
+        "request": request,
+        "entries": entries,
+        "query": q,
+        "page": page,
+        "limit": limit,
+        "total": total,
+        "has_prev": page > 1,
+        "has_next": end < total,
+    })
