@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>New Entry - Hyperindex</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <h1>Add a New Entry</h1>
+
+  {% if error %}
+    <p style="color: red;">{{ error }}</p>
+  {% endif %}
+
+  <form method="post" action="/entries/new">
+    <label for="url">URL:</label><br>
+    <input type="url" name="url" required><br><br>
+
+    <label for="title">Title:</label><br>
+    <input type="text" name="title" required><br><br>
+
+    <label for="tags">Tags (comma-separated):</label><br>
+    <input type="text" name="tags"><br><br>
+
+    <label for="notes">Notes:</label><br>
+    <textarea name="notes" rows="4" cols="50"></textarea><br><br>
+
+    <button type="submit">Create Entry</button>
+  </form>
+
+  <p><a href="/dashboard">← Back to Dashboard</a></p>
+</body>
+</html>

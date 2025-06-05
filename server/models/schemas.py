@@ -1,21 +1,37 @@
-from datetime import datetime
-from typing import Optional
-
 from pydantic import BaseModel
+from typing import List, Optional
 
+class TagSchema(BaseModel):
+    name: str
 
-class BaseEntry(BaseModel):
+class EntryBase(BaseModel):
     url: str
-    title: str
-    tags: list[str] = []
-    description: Optional[str] = None
+    title: Optional[str]
+    notes: Optional[str]
+    is_public: Optional[bool] = False
+    tags: Optional[List[str]] = []
 
-class EntryIn(BaseEntry):
+class EntryCreate(EntryBase):
     pass
 
-class EntryOut(BaseEntry):
+class EntryUpdate(EntryBase):
+    pass
+
+class EntryOut(EntryBase):
     id: int
-    date_added: datetime
-    archived_url: Optional[str] = None
-    snapshot_dir: Optional[str] = None
-    deleted: bool = False
+    user_id: int
+    is_deleted: bool
+
+    class Config:
+        from_attributes = True
+
+class UserOut(BaseModel):
+    id: int
+    username: str
+
+    class Config:
+        from_attributes = True
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str

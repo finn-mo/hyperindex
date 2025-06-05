@@ -36,3 +36,4 @@ build/
 
 # Server database
 server/data/*.db
+*.db

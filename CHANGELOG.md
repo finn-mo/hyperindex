@@ -1,4 +1,24 @@
 # Changelog
+## [Unreleased]
+### Added
+- User login and registration views with authentication
+- Personal dashboard at `/dashboard` for managing user-specific entries
+- Entry creation, editing, and soft-deletion via web UI
+- Pagination and tag-based filtering in both the dashboard and public index
+- Clickable tag links to filter entries by tag
+- Combined query and tag filtering on homepage
+- Tag parsing on submission form; tags saved and reused
+- Role-based visibility: dashboard only shows user-owned entries; homepage shows public entries only
+
+### Changed
+- Refactored project to live entirely on web layer
+- Deprecated client and CLI model, replaced with user authenticated `/dashboard` page
+- Rebuild routes and API interaction
+- Updated homepage template to show tag filters, count, and search context
+- Refactored dashboard logic to use `joinedload(Entry.tags)` for efficiency
+- Unified pagination logic across index and dashboard
+- Switched tag display to consistent styling across homepage and dashboard
+
 ## [2.0.0] - 2025-06-04
 ### Added
 - Introduced REST API server using `FastAPI`, supporting `POST /entries`, `GET /entries`, and `GET /entries/{id}`

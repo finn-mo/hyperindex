@@ -1,32 +1,16 @@
 import os
-import sqlite3
-from pathlib import Path
-from typing import Optional
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, declarative_base
 
-DB_PATH = Path(os.getenv("HYPERINDEX_SERVER_DB", "server/data/yellowpages.db"))
+Base = declarative_base()
 
+from server.models.orm import Entry, User  # Ensure models are registered
 
-def get_conn(db_path: Optional[Path] = None) -> sqlite3.Connection:
-    path = db_path or DB_PATH
-    conn = sqlite3.connect(path)
-    conn.row_factory = sqlite3.Row
-    return conn
+DB_PATH = os.getenv("HYPERINDEX_SERVER_DB", "./hyperindex.db")
+DATABASE_URL = f"sqlite:///{DB_PATH}"
 
+engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
+SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
 
 def init_db():
-    
-    DB_PATH.parent.mkdir(parents=True, exist_ok=True)
-    with get_conn() as conn:
-        conn.execute("""
-            CREATE TABLE IF NOT EXISTS entries (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                url TEXT NOT NULL,
-                title TEXT NOT NULL,
-                tags TEXT,
-                description TEXT,
-                date_added TEXT,
-                archived_url TEXT,
-                snapshot_dir TEXT,
-                deleted INTEGER DEFAULT 0
-            );
-        """)
+    Base.metadata.create_all(bind=engine)

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Edit Entry - Hyperindex</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <h1>Edit Entry</h1>
+
+  <form method="post">
+    <label for="url">URL:</label><br>
+    <input type="url" name="url" value="{{ entry.url }}" required><br><br>
+
+    <label for="title">Title:</label><br>
+    <input type="text" name="title" value="{{ entry.title }}" required><br><br>
+
+    <label for="tags">Tags (comma-separated):</label><br>
+    <input type="text" name="tags" value="{{ entry.tags | map(attribute='name') | join(', ') }}"><br><br>
+
+    <label for="notes">Notes:</label><br>
+    <textarea name="notes" rows="4" cols="50">{{ entry.notes }}</textarea><br><br>
+
+    <button type="submit">Save Changes</button>
+  </form>
+
+  <p><a href="/dashboard">← Back to Dashboard</a></p>
+</body>
+</html>

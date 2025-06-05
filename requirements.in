@@ -6,3 +6,7 @@ pydantic
 uvicorn
 jinja2
 pytest
+sqlalchemy
+python-jose
+passlib
+bcrypt
