@@ -4,7 +4,6 @@ from fastapi import FastAPI, Request, Response, Depends, Form, Query, HTTPExcept
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
-from sqlalchemy import or_
 from sqlalchemy.orm import Session, joinedload
 
 from server.api.auth import router as auth_router
@@ -13,7 +12,7 @@ from server.api.entries import router as entries_router
 from server.api.yellowpages import router as yellowpages_router
 
 from server.db.connection import init_db, SessionLocal
-from server.db.entries import get_entries_by_user, create_entry, get_entry_by_id, update_entry, soft_delete_entry
+from server.db.entries import create_entry, get_entry_by_id, soft_delete_entry
 from server.db.public import search_public_entries
 from server.models.orm import User, Entry, Tag
 from server.security.auth import get_current_user, get_db
@@ -59,7 +58,11 @@ def dashboard_page(
         base_query = (
             db.query(Entry)
             .options(joinedload(Entry.tags))
-            .filter(Entry.user_id == user.id, Entry.is_deleted == 0)
+            .filter(
+                Entry.user_id == user.id,
+                Entry.is_deleted == False,
+                Entry.is_public_copy == False
+            )
         )
 
         if tag:
@@ -133,7 +136,7 @@ def create_entry_from_form(
             if not tag:
                 tag = Tag(name=tag_name)
                 db.add(tag)
-                db.flush()  # ensure tag.id is available
+                db.flush()
             tag_objects.append(tag)
 
         entry = Entry(
@@ -206,12 +209,9 @@ def edit_entry(
     user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    if user.is_admin:
-        entry = db.query(Entry).get(entry_id)
-    else:
-        entry = get_entry_by_id(db, entry_id, user.id)
+    entry = db.query(Entry).get(entry_id)
 
-    if not entry:
+    if not entry or (not user.is_admin and entry.user_id != user.id):
         raise HTTPException(status_code=404, detail="Entry not found")
 
     tag_objects = []
@@ -230,9 +230,11 @@ def edit_entry(
 
     db.commit()
 
-    # Redirect admin back to the admin panel, users to dashboard
-    redirect_url = "/admin" if user.is_admin else "/dashboard"
-    return RedirectResponse(redirect_url, status_code=302)
+    if user.id == entry.user_id and not entry.is_public_copy:
+        return RedirectResponse("/dashboard", status_code=302)
+    else:
+        return RedirectResponse("/admin", status_code=302)
+
 
 
 @app.post("/entries/{entry_id}/delete")
@@ -250,9 +252,9 @@ def submit_entry_for_review(
     entry = get_entry_by_id(db, entry_id, user.id)
     if not entry or entry.is_deleted:
         raise HTTPException(status_code=404, detail="Entry not found")
-
-    if entry.is_public:
-        raise HTTPException(status_code=400, detail="Entry already public")
+    
+    if entry.is_public_copy:
+        raise HTTPException(status_code=400, detail="Cannot submit admin-managed entries")
 
     if not entry.submitted_to_public:
         entry.submitted_to_public = True
@@ -272,11 +274,11 @@ def admin_panel(
 
     pending_entries = db.query(Entry).filter(
         Entry.submitted_to_public == True,
-        Entry.is_public == False
+        Entry.is_public_copy == False
     ).order_by(Entry.id.desc()).all()
 
     public_entries = db.query(Entry).filter(
-        Entry.is_public == True
+        Entry.is_public_copy == True
     ).order_by(Entry.id.desc()).all()
 
     return templates.TemplateResponse("admin_panel.html", {
@@ -300,12 +302,26 @@ def approve_entry(
     if not entry:
         raise HTTPException(status_code=404, detail="Entry not found")
 
-    if entry.is_public:
+    if entry.is_public_copy:
         raise HTTPException(status_code=400, detail="Entry already approved")
 
-    entry.is_public = True
+    # Clone the user’s submitted entry
+    cloned_tags = entry.tags[:]
+
+    admin_entry = Entry(
+        title=entry.title,
+        url=entry.url,
+        notes=entry.notes,
+        user_id=user.id,
+        is_public_copy=True,
+        original_id=entry.id,
+        tags=cloned_tags,
+    )
+
+    db.add(admin_entry)
+    entry.submitted_to_public = False  # mark original as processed
     db.commit()
-    return RedirectResponse("/admin", status_code=302)
+    return RedirectResponse(f"/entries/{admin_entry.id}/edit", status_code=302)
 
 
 @app.post("/admin/reject/{entry_id}")
@@ -321,7 +337,7 @@ def reject_entry(
     if not entry:
         raise HTTPException(status_code=404, detail="Entry not found")
 
-    if entry.is_public:
+    if entry.is_public_copy:
         raise HTTPException(status_code=400, detail="Cannot reject an already approved entry")
 
     entry.submitted_to_public = False

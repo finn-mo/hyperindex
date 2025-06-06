@@ -6,42 +6,48 @@
   <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
+  <div class="container">
     <h1>Admin Panel</h1>
     <p>Welcome, {{ user.username }}!</p>
 
-    <h2>Pending Submissions</h2>
-    {% for entry in pending_entries %}
-    <div class="card">
+    <section>
+      <h2>Pending Submissions</h2>
+      {% for entry in pending_entries %}
+      <div class="card">
         <h3>{{ entry.title }}</h3>
         <p><a href="{{ entry.url }}" target="_blank">{{ entry.url }}</a></p>
         <p><strong>Owner:</strong> {{ entry.owner.username }}</p>
-        <p>{{ entry.notes }}</p>
+        <p class="desc">{{ entry.notes }}</p>
         <div class="actions">
-        <form method="POST" action="/admin/approve/{{ entry.id }}">
+          <form method="POST" action="/admin/approve/{{ entry.id }}">
             <button type="submit">Approve</button>
-        </form>
-        <form method="POST" action="/admin/reject/{{ entry.id }}">
+          </form>
+          <form method="POST" action="/admin/reject/{{ entry.id }}">
             <button type="submit">Reject</button>
-        </form>
+          </form>
         </div>
-    </div>
-    {% else %}
-    <p>No entries pending review.</p>
-    {% endfor %}
+      </div>
+      {% else %}
+      <p>No entries pending review.</p>
+      {% endfor %}
+    </section>
 
-    <h2>Public Entries (Yellowpages)</h2>
-    {% for entry in public_entries %}
-    <div class="card">
+    <section>
+      <h2>Public Entries (Yellowpages)</h2>
+      {% for entry in public_entries %}
+      <div class="card">
         <h3>{{ entry.title }}</h3>
         <p><a href="{{ entry.url }}" target="_blank">{{ entry.url }}</a></p>
         <p><strong>Owner:</strong> {{ entry.owner.username }}</p>
-        <p>{{ entry.notes }}</p>
+        <p class="desc">{{ entry.notes }}</p>
         <form method="GET" action="/entries/{{ entry.id }}/edit">
-        <button type="submit">Edit</button>
+          <button type="submit">Edit</button>
         </form>
-    </div>
-    {% else %}
-    <p>No public entries.</p>
-    {% endfor %}
+      </div>
+      {% else %}
+      <p>No public entries.</p>
+      {% endfor %}
+    </section>
+  </div>
 </body>
 </html>

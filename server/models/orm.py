@@ -31,8 +31,10 @@ class Entry(Base):
     title = Column(String)
     notes = Column(String)
     is_deleted = Column(Boolean, default=False)
-    is_public = Column(Boolean, default=False)
+    is_public_copy = Column(Boolean, default=False)
     submitted_to_public = Column(Boolean, default=False)
+    original_id = Column(Integer, ForeignKey("entries.id"), nullable=True)
+    original = relationship("Entry", remote_side="Entry.id", backref="admin_forks")
 
     user_id = Column(Integer, ForeignKey("users.id"))
     owner = relationship("User", back_populates="entries")

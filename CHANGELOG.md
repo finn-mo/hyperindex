@@ -12,12 +12,9 @@
 
 ### Changed
 - Refactored project to live entirely on web layer
-- Deprecated client and CLI model, replaced with user authenticated `/dashboard` page
-- Rebuild routes and API interaction
+- Fully deprecated CLI interface in favor of authenticated web dashboard at `/dashboard`
+- Rebuilt routes and API interaction to support web-first flow
 - Updated homepage template to show tag filters, count, and search context
-- Refactored dashboard logic to use `joinedload(Entry.tags)` for efficiency
-- Unified pagination logic across index and dashboard
-- Switched tag display to consistent styling across homepage and dashboard
 
 ## [2.0.0] - 2025-06-04
 ### Added

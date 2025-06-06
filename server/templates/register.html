@@ -1,19 +1,23 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
   <title>Register</title>
   <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
-  <h1>Register</h1>
-  <form method="POST" action="/auth/register">
-    <label>Username:</label><br>
-    <input type="text" name="username" required><br><br>
+  <div class="container">
+    <h1>Register</h1>
 
-    <label>Password:</label><br>
-    <input type="password" name="password" required><br><br>
+    <form method="POST" action="/auth/register">
+      <label for="username">Username:</label>
+      <input type="text" id="username" name="username" required>
 
-    <button type="submit">Register</button>
-  </form>
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="password" required>
+
+      <button type="submit">Register</button>
+    </form>
+  </div>
 </body>
 </html>

@@ -1,5 +1,5 @@
 # server/api/entries.py
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from server.models.schemas import EntryCreate, EntryOut, EntryUpdate
 from server.db.connection import SessionLocal

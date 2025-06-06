@@ -34,17 +34,25 @@ form {
     padding: 0.5rem;
     border: 1px solid #aaa;
     display: flex;
-    gap: 0.25rem; /* space between input and buttons */
+    flex-wrap: wrap;
+    gap: 0.25rem;
     align-items: center;
 }
-
-input[type="text"] {
+input[type="text"],
+input[type="password"],
+input[type="email"] {
     font-family: inherit;
     padding: 4px 6px;
     border: 1px solid #666;
     background: #fff;
     font-size: 0.85rem;
     flex: 1;
+    min-width: 200px;
+}
+
+label {
+    font-weight: bold;
+    margin-right: 0.5rem;
 }
 
 button,
@@ -61,6 +69,17 @@ button,
 button:hover,
 .clear-btn:hover {
     background-color: #ffd700;
+}
+
+textarea {
+  font-family: inherit;
+  padding: 4px 6px;
+  border: 1px solid #666;
+  background: #fff;
+  font-size: 0.85rem;
+  width: 100%;
+  box-sizing: border-box;
+  resize: vertical;
 }
 
 .clear-btn {
@@ -86,6 +105,14 @@ button:hover,
     color: #b30000;
 }
 
+.card h3 {
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #b30000;
+}
+
 .card a {
     color: #0000cc;
     font-weight: bold;
@@ -94,6 +121,12 @@ button:hover,
 
 .card a:hover {
     text-decoration: underline;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 1rem;
 }
 
 /* Description and tags */
@@ -169,4 +202,15 @@ hr {
   border-radius: 4px;
   font-size: 0.8em;
   margin-left: 8px;
+}
+
+.actions {
+  margin-top: 0.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.actions form {
+  margin: 0;
 }

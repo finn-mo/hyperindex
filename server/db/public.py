@@ -4,7 +4,7 @@ from server.models.orm import Entry, Tag
 from typing import Optional
 
 def search_public_entries(db, query: Optional[str], tag: Optional[str], limit: int, offset: int):
-    base_query = db.query(Entry).filter(Entry.is_public == True)
+    base_query = db.query(Entry).filter(Entry.is_public_copy == True)
 
     if query:
         search = f"%{query}%"
