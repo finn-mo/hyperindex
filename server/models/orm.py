@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Table
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Table
 from sqlalchemy.orm import relationship
 from server.db.connection import Base
 
@@ -28,8 +28,9 @@ class Entry(Base):
     url = Column(String)
     title = Column(String)
     notes = Column(String)
-    is_deleted = Column(Integer, default=0)
-    is_public = Column(Integer, default=0)
+    is_deleted = Column(Boolean, default=False)
+    is_public = Column(Boolean, default=False)
+    submitted_to_public = Column(Boolean, default=False)
 
     user_id = Column(Integer, ForeignKey("users.id"))
     owner = relationship("User", back_populates="entries")

@@ -1,6 +1,6 @@
 from typing import Optional
 
-from fastapi import FastAPI, Request, Response, Depends, Form, Query
+from fastapi import FastAPI, Request, Response, Depends, Form, Query, HTTPException
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
@@ -210,4 +210,22 @@ def edit_entry(entry_id: int, request: Request, title: str = Form(...), url: str
 @app.post("/entries/{entry_id}/delete")
 def delete_entry(entry_id: int, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     soft_delete_entry(db, entry_id, user.id)
+    return RedirectResponse("/dashboard", status_code=302)
+
+
+@app.post("/entries/{entry_id}/submit")
+def submit_entry_for_review(
+    entry_id: int,
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    entry = get_entry_by_id(db, entry_id, user.id)
+    if not entry or entry.is_deleted:
+        raise HTTPException(status_code=404, detail="Entry not found")
+
+    # Only mark as submitted if not already public or submitted
+    if not entry.submitted_to_public:
+        entry.submitted_to_public = True
+        db.commit()
+
     return RedirectResponse("/dashboard", status_code=302)

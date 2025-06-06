@@ -6,8 +6,8 @@ Hyperindex lets you build a personal internet directory and browse a shared, use
 
 ## Features
 - **User authentication** — register and log in to manage your own entries
-- **Personal dashboard (`/dashboard`)** — view, add, edit, and delete your own bookmarks
-- **Public Yellowpages (`/`)** — browse entries shared by all users
+- **Personal dashboard** (`/dashboard`) — view, add, edit, and delete your own bookmarks
+- **Public Yellowpages** (`/`) — browse entries shared by all users
 - **Taggable, searchable entries** — filter results by tag and keyword
 - **Paginated directory** — browse entries in a classic "directory" format
 - **Fast and lightweight** — built with FastAPI + Jinja2 + SQLite

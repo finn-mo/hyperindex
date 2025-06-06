@@ -42,12 +42,22 @@
           <div class="desc">{{ entry.notes | e }}</div>
         {% endif %}
 
+        {% if entry.submitted_to_public %}
+          <span class="badge">Submitted</span>
+        {% endif %}
+
         <form method="GET" action="/entries/{{ entry.id }}/edit" style="display:inline;">
           <button type="submit">Edit</button>
         </form>
 
         <form method="POST" action="/entries/{{ entry.id }}/delete" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this entry?');">
           <button type="submit">Delete</button>
+        </form>
+
+        <form method="POST" action="/entries/{{ entry.id }}/submit" style="display:inline;">
+          <button type="submit" {% if entry.submitted_to_public %}disabled{% endif %}>
+            {% if entry.submitted_to_public %}Submitted{% else %}Submit to Yellowpages{% endif %}
+          </button>
         </form>
       </div>
     {% else %}
