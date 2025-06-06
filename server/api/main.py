@@ -270,14 +270,20 @@ def admin_panel(
     if not user.is_admin:
         return RedirectResponse("/dashboard", status_code=302)
 
-    entries = db.query(Entry).filter(
+    pending_entries = db.query(Entry).filter(
         Entry.submitted_to_public == True,
         Entry.is_public == False
     ).order_by(Entry.id.desc()).all()
+
+    public_entries = db.query(Entry).filter(
+        Entry.is_public == True
+    ).order_by(Entry.id.desc()).all()
+
     return templates.TemplateResponse("admin_panel.html", {
         "request": request,
         "user": user,
-        "entries": entries,
+        "pending_entries": pending_entries,
+        "public_entries": public_entries,
     })
 
 

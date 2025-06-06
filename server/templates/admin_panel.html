@@ -6,38 +6,42 @@
   <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
-  <h1>Admin Panel</h1>
-  <p>Welcome, {{ user.username }}!</p>
+    <h1>Admin Panel</h1>
+    <p>Welcome, {{ user.username }}!</p>
 
-  {% for entry in entries %}
+    <h2>Pending Submissions</h2>
+    {% for entry in pending_entries %}
     <div class="card">
-      <h3>{{ entry.title }}</h3>
-      <p><a href="{{ entry.url }}" target="_blank">{{ entry.url }}</a></p>
-      <p><strong>Owner:</strong> {{ entry.owner.username }}</p>
-      <p>{{ entry.notes }}</p>
-
-      <div class="badges">
-        {% if entry.is_public %}
-          <span class="badge">Approved</span>
-        {% else %}
-          <span class="badge">Pending Review</span>
-        {% endif %}
-      </div>
-
-      <div class="actions">
+        <h3>{{ entry.title }}</h3>
+        <p><a href="{{ entry.url }}" target="_blank">{{ entry.url }}</a></p>
+        <p><strong>Owner:</strong> {{ entry.owner.username }}</p>
+        <p>{{ entry.notes }}</p>
+        <div class="actions">
         <form method="POST" action="/admin/approve/{{ entry.id }}">
-          <button type="submit">Approve</button>
+            <button type="submit">Approve</button>
         </form>
         <form method="POST" action="/admin/reject/{{ entry.id }}">
-          <button type="submit">Reject</button>
+            <button type="submit">Reject</button>
         </form>
-        <form method="GET" action="/entries/{{ entry.id }}/edit">
-          <button type="submit">Edit</button>
-        </form>
-      </div>
+        </div>
     </div>
-  {% else %}
-    <p>No entries submitted for review.</p>
-  {% endfor %}
+    {% else %}
+    <p>No entries pending review.</p>
+    {% endfor %}
+
+    <h2>Public Entries (Yellowpages)</h2>
+    {% for entry in public_entries %}
+    <div class="card">
+        <h3>{{ entry.title }}</h3>
+        <p><a href="{{ entry.url }}" target="_blank">{{ entry.url }}</a></p>
+        <p><strong>Owner:</strong> {{ entry.owner.username }}</p>
+        <p>{{ entry.notes }}</p>
+        <form method="GET" action="/entries/{{ entry.id }}/edit">
+        <button type="submit">Edit</button>
+        </form>
+    </div>
+    {% else %}
+    <p>No public entries.</p>
+    {% endfor %}
 </body>
 </html>
