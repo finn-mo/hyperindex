@@ -178,14 +178,41 @@ def index(
 
 
 @app.get("/entries/{entry_id}/edit", response_class=HTMLResponse)
-def edit_entry_form(entry_id: int, request: Request, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
-    entry = get_entry_by_id(db, entry_id, user.id)
+def edit_entry_form(
+    entry_id: int,
+    request: Request,
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    if user.is_admin:
+        entry = db.query(Entry).get(entry_id)
+    else:
+        entry = get_entry_by_id(db, entry_id, user.id)
+
+    if not entry:
+        raise HTTPException(status_code=404, detail="Entry not found")
+
     return templates.TemplateResponse("edit_entry.html", {"request": request, "entry": entry})
 
 
 @app.post("/entries/{entry_id}/edit")
-def edit_entry(entry_id: int, request: Request, title: str = Form(...), url: str = Form(...), notes: str = Form(""), tags: str = Form(""), user: User = Depends(get_current_user), db: Session = Depends(get_db)):
-    _ = get_entry_by_id(db, entry_id, user.id)
+def edit_entry(
+    entry_id: int,
+    request: Request,
+    title: str = Form(...),
+    url: str = Form(...),
+    notes: str = Form(""),
+    tags: str = Form(""),
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    if user.is_admin:
+        entry = db.query(Entry).get(entry_id)
+    else:
+        entry = get_entry_by_id(db, entry_id, user.id)
+
+    if not entry:
+        raise HTTPException(status_code=404, detail="Entry not found")
 
     tag_objects = []
     for tag_name in [t.strip() for t in tags.split(",") if t.strip()]:
@@ -196,15 +223,16 @@ def edit_entry(entry_id: int, request: Request, title: str = Form(...), url: str
             db.flush()
         tag_objects.append(tag)
 
-    entry_data = {
-        "title": title,
-        "url": url,
-        "notes": notes,
-        "tags": tag_objects,
-    }
+    entry.title = title
+    entry.url = url
+    entry.notes = notes
+    entry.tags = tag_objects
 
-    update_entry(db, entry_id, user.id, entry_data)
-    return RedirectResponse("/dashboard", status_code=302)
+    db.commit()
+
+    # Redirect admin back to the admin panel, users to dashboard
+    redirect_url = "/admin" if user.is_admin else "/dashboard"
+    return RedirectResponse(redirect_url, status_code=302)
 
 
 @app.post("/entries/{entry_id}/delete")
@@ -223,9 +251,73 @@ def submit_entry_for_review(
     if not entry or entry.is_deleted:
         raise HTTPException(status_code=404, detail="Entry not found")
 
-    # Only mark as submitted if not already public or submitted
+    if entry.is_public:
+        raise HTTPException(status_code=400, detail="Entry already public")
+
     if not entry.submitted_to_public:
         entry.submitted_to_public = True
         db.commit()
 
     return RedirectResponse("/dashboard", status_code=302)
+
+
+@app.get("/admin", response_class=HTMLResponse)
+def admin_panel(
+    request: Request,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
+    if not user.is_admin:
+        return RedirectResponse("/dashboard", status_code=302)
+
+    entries = db.query(Entry).filter(
+        Entry.submitted_to_public == True,
+        Entry.is_public == False
+    ).order_by(Entry.id.desc()).all()
+    return templates.TemplateResponse("admin_panel.html", {
+        "request": request,
+        "user": user,
+        "entries": entries,
+    })
+
+
+@app.post("/admin/approve/{entry_id}")
+def approve_entry(
+    entry_id: int,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user)
+):
+    if not user.is_admin:
+        raise HTTPException(status_code=403, detail="Access denied")
+
+    entry = db.query(Entry).get(entry_id)
+    if not entry:
+        raise HTTPException(status_code=404, detail="Entry not found")
+
+    if entry.is_public:
+        raise HTTPException(status_code=400, detail="Entry already approved")
+
+    entry.is_public = True
+    db.commit()
+    return RedirectResponse("/admin", status_code=302)
+
+
+@app.post("/admin/reject/{entry_id}")
+def reject_entry(
+    entry_id: int,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user)
+):
+    if not user.is_admin:
+        raise HTTPException(status_code=403, detail="Access denied")
+
+    entry = db.query(Entry).get(entry_id)
+    if not entry:
+        raise HTTPException(status_code=404, detail="Entry not found")
+
+    if entry.is_public:
+        raise HTTPException(status_code=400, detail="Cannot reject an already approved entry")
+
+    entry.submitted_to_public = False
+    db.commit()
+    return RedirectResponse("/admin", status_code=302)

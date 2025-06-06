@@ -14,6 +14,8 @@ class User(Base):
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String, unique=True, index=True)
     password_hash = Column(String)
+    is_admin = Column(Boolean, default=False)
+
     entries = relationship("Entry", back_populates="owner")
 
 class Tag(Base):

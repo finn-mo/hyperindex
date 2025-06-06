@@ -30,20 +30,24 @@
       <div class="card">
         <h3><a href="{{ entry.url }}" target="_blank">{{ entry.title }}</a></h3>
 
-        {% if entry.tags %}
-        <div class="tags">
-          {% for tag in entry.tags %}
-            <span><a href="/dashboard?tag={{ tag.name }}">{{ tag.name }}</a></span>
-          {% endfor %}
+        <div class="badges">
+          {% if entry.is_public %}
+            <span class="badge">Public</span>
+          {% elif entry.submitted_to_public %}
+            <span class="badge">Submitted</span>
+          {% endif %}
         </div>
+
+        {% if entry.tags %}
+          <div class="tags">
+            {% for tag in entry.tags %}
+              <span><a href="/dashboard?tag={{ tag.name }}">{{ tag.name }}</a></span>
+            {% endfor %}
+          </div>
         {% endif %}
 
         {% if entry.notes %}
           <div class="desc">{{ entry.notes | e }}</div>
-        {% endif %}
-
-        {% if entry.submitted_to_public %}
-          <span class="badge">Submitted</span>
         {% endif %}
 
         <form method="GET" action="/entries/{{ entry.id }}/edit" style="display:inline;">
@@ -55,8 +59,8 @@
         </form>
 
         <form method="POST" action="/entries/{{ entry.id }}/submit" style="display:inline;">
-          <button type="submit" {% if entry.submitted_to_public %}disabled{% endif %}>
-            {% if entry.submitted_to_public %}Submitted{% else %}Submit to Yellowpages{% endif %}
+          <button type="submit" {% if entry.submitted_to_public or entry.is_public %}disabled{% endif %}>
+            Submit to Yellowpages
           </button>
         </form>
       </div>
