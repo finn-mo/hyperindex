@@ -1,17 +1,22 @@
 ## [Unreleased]
 ### Added
-- Web-first UI: new `/rolodex` (personal dashboard) and `/` (Yellow Pages)
-- Entry submission + admin moderation system
-- Role-based permissions for submitting and approving entries
-- Admins manage Yellow Pages entries via forks of user-submitted entries
-- Tag-aware search with combined filters and linked tags
-- Accessibility improvements (ARIA, :focus states)
+- Web-first UI with distinct views:
+  - `/` — Yellow Pages (public directory)
+  - `/rolodex` — personal entry dashboard
+  - `/admin` — admin moderation panel
+  - Top navbar for navigation
+- Entry submission and admin approval system
+- Role-based permissions for entry submission and moderation
+- Admin-managed Yellow Pages entries are forked copies of user submissions
+- Tag-aware search: supports combined filters and linked tag navigation
+- Accessibility improvements (ARIA roles, `:focus` states, screen reader support)
 
 ### Changed
-- Public index now shows only approved admin-managed entries
-- Split styles: `rolodex.css` for dashboard, `yellowpages.css` for public view
-- Refactored backend: separate `views`, `services`, and `utils`
-- Removed CLI support
+- Public homepage now shows only admin-approved entries
+- Split visual styles: `yellowpages.css` for public, `rolodex.css` for dashboard
+- Major backend refactor:
+  - Separated route logic into `views/`, business logic into `services/`, and shared helpers into `utils/`
+- Removed CLI interface and related references
 
 ## [2.0.0] - 2025-06-04
 ### Added

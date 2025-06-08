@@ -35,6 +35,7 @@ def register_user(
 def login_user(
     username: str = Form(...),
     password: str = Form(...),
+    next: str = Form("/rolodex"),
     db: Session = Depends(get_db)
 ):
     user = db.query(User).filter(User.username == username).first()
@@ -42,6 +43,6 @@ def login_user(
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
     token = create_token({"sub": user.username})
-    resp = RedirectResponse(url="/rolodex", status_code=302)
+    resp = RedirectResponse(url=next, status_code=302)
     resp.set_cookie(key="access_token", value=token, httponly=True)
     return resp

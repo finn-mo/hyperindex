@@ -16,6 +16,8 @@
       <label for="password">Password:</label>
       <input type="password" id="password" name="password" required autocomplete="current-password">
 
+      <input type="hidden" name="next" value="{{ request.query_params.get('next', '/') }}">
+
       <button type="submit">Login</button>
     </form>
   </main>

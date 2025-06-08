@@ -11,7 +11,8 @@ Hyperindex is a lightweight web app for curating and sharing independent website
 - **Tagging and search** — with fast filtering and pagination
 - **Submission system** — users submit entries for admin review
 - **Paginated directory** — browse entries in a classic "directory" format
-- **Moderation model** — Admins approve submissions by forking them into public copies; users retain control over their original entries
+- **Moderation model** — admins approve submissions by forking them into public copies; users retain control over their original entries
+- **Unified navigation bar** — easily switch between public, personal, and admin views
 - **Fast and lightweight** — built with FastAPI + Jinja2 + SQLite
 
 ## Roles

@@ -1,8 +1,11 @@
-from fastapi import APIRouter, Request, Depends, Query
+from fastapi import APIRouter, Request, Depends, Query, Cookie
+from jose import JWTError, jwt
+from server.security import SECRET_KEY, ALGORITHM
 from fastapi.responses import HTMLResponse
 from sqlalchemy.orm import Session
 from typing import Optional
 
+from server.models.entities import User
 from server.security import get_db
 from server.services.entries import search_public_entries
 from fastapi.templating import Jinja2Templates
@@ -18,14 +21,26 @@ def yellowpages(
     tag: Optional[str] = Query(None),
     page: int = Query(1, ge=1),
     limit: int = 10,
+    access_token: Optional[str] = Cookie(None),
     db: Session = Depends(get_db)
 ):
+    user = None
+    if access_token:
+        try:
+            payload = jwt.decode(access_token, SECRET_KEY, algorithms=[ALGORITHM])
+            username = payload.get("sub")
+            if username:
+                user = db.query(User).filter_by(username=username).first()
+        except JWTError:
+            pass
+
     offset = (page - 1) * limit
     entries, total = search_public_entries(db, query=q, tag=tag, limit=limit, offset=offset)
     total_pages = (total // limit) + (1 if total % limit > 0 else 0)
 
     return templates.TemplateResponse("yellowpages.html", {
         "request": request,
+        "user": user,
         "entries": entries,
         "query": q,
         "tag": tag,
