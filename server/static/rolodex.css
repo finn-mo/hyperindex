@@ -1,0 +1,237 @@
+/* Rolodex (Dashboard) Stylesheet */
+
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Base layout */
+body {
+  background-color: #f6f1e7;
+  font-family: "Arial Narrow", Arial, sans-serif;
+  font-size: 0.85rem;
+  line-height: 1.2;
+  color: #000;
+  max-width: 900px;
+  margin: auto;
+  padding: 1rem;
+}
+
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+/* Typography */
+h1 {
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
+  color: #3a2f1f;
+  border-bottom: 1px solid #bbb;
+  padding-bottom: 0.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+h2 {
+  font-size: 1.1rem;
+  margin: 1rem 0 0.5rem;
+  color: #3a2f1f;
+}
+
+h3 {
+  font-size: 1rem;
+  text-transform: none;
+  color: #2a1f0f;
+}
+
+p {
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid #ccc;
+  margin: 0.5rem 0;
+}
+
+/* Form elements */
+label {
+  font-weight: bold;
+  margin-right: 0.5rem;
+}
+
+textarea,
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="url"] {
+  font-family: inherit;
+  font-size: 0.85rem;
+  padding: 4px 6px;
+  border: 1px solid #666;
+  background: #fff;
+  width: 100%;
+  box-sizing: border-box;
+  resize: vertical;
+}
+
+form {
+  margin-top: 0.5rem;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+/* Buttons (actions only) */
+.card .actions button,
+.card .actions .clear-btn {
+  font-family: inherit;
+  font-size: 0.85rem;
+  padding: 4px 10px;
+  border-radius: 3px;
+  cursor: pointer;
+  font-weight: bold;
+  border: 1px solid #bfa76f;
+  background-color: #f9eed1;
+  color: #000;
+  box-shadow: none;
+}
+
+.card .actions button:hover,
+.card .actions .clear-btn:hover {
+  background-color: #e6d8a9;
+}
+
+.card .actions button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Card layout */
+.card {
+  background: repeating-linear-gradient(
+    to bottom,
+    #fdfaf5,
+    #fdfaf5 22px,
+    #f0e9dd 23px
+  );
+  border: 1px solid #bfa76f;
+  border-left: 6px solid #cfa654;
+  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
+  margin: 1.5rem 0;
+  padding: 1rem;
+  position: relative;
+  border-radius: 6px;
+}
+
+.card::before {
+  content: attr(data-label);
+  position: absolute;
+  top: -1.25rem;
+  left: 1rem;
+  background: #d6b370;
+  padding: 2px 6px;
+  font-family: "Lucida Sans Typewriter", "Lucida Console", "Courier", monospace;
+  font-size: 0.75rem;
+  font-weight: bold;
+  color: #3a2f1f;
+  border-radius: 3px 3px 0 0;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+  z-index: 1;
+}
+
+.card form {
+  margin-bottom: 0.5rem;
+}
+
+.card .actions {
+  margin-top: 0.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+/* Links */
+.card a {
+  color: #2a1f0f;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.card a:hover {
+  text-decoration: underline;
+}
+
+/* Tags */
+.tags {
+  margin-top: 0.4rem;
+  font-size: 0.75rem;
+  color: #000;
+}
+
+.tags span {
+  background: #e4dcc4;
+  border: 1px solid #aaa;
+  font-weight: normal;
+  padding: 2px 6px;
+  margin: 2px;
+  display: inline-block;
+  font-size: 0.75rem;
+}
+
+.tags span a {
+  color: #2a1f0f;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.tags span a:hover {
+  text-decoration: underline;
+}
+
+/* Pagination */
+.pagination {
+  background: none;
+  padding: 0.5rem 0;
+  text-align: center;
+}
+
+.page-link,
+.pagination strong {
+  background-color: #fdfaf5;
+  border: 1px solid #bfa76f;
+  color: #333;
+  margin: 0 4px;
+  padding: 4px 8px;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.page-link:hover {
+  background-color: #e6d8a9;
+}
+
+.pagination strong {
+  background-color: #e6d8a9;
+}
+
+.page-ellipsis {
+  margin: 0 6px;
+  color: #666;
+  font-weight: bold;
+}
+
+.card h3 {
+  font-family: "Arial Narrow", Arial, sans-serif;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: bold;
+  color: #2a1f0f;
+  margin-bottom: 0.3rem;
+}
