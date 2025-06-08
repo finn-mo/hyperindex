@@ -1,21 +1,20 @@
-# Hyperindex – Internet Rolodex and Yellowpages
+# Hyperindex – Internet Rolodex and Yellow Pages
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python Version](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/)
 [![Last Commit](https://img.shields.io/github/last-commit/finn-mo/hyperindex.svg)](https://github.com/finn-mo/hyperindex/commits/main)  
-Hyperindex helps indie-web users build a personal internet directory and browse a shared, user-curated index through a lightweight web interface. It features a personal "Rolodex" and public "Yellowpages". Hyperindex supports multi-user login, and fast, tag-aware filtering. Built with FastAPI, Jinja2, and SQLite.
+Hyperindex is a lightweight web app for curating and sharing independent websites. Inspired by the early internet, it lets users build a personal Rolodex and explore a shared Yellow Pages of user-submitted sites. Designed for the indie web and independent browsing. Built with FastAPI, Jinja2, and SQLite.
 
 ## Features
 - **Personal Rolodex** (`/rolodex`) — view, add, edit, and delete your own bookmarks
-- **Public Yellowpages** (`/`) — browse entries shared by all users
+- **Public Yellow Pages** (`/`) — browse entries shared by all users
 - **User authentication** — register and log in to manage your own entries
-- **Tagging and search** with fast filtering and pagination
-- **Submission system**: users submit entries for admin review
+- **Tagging and search** — with fast filtering and pagination
+- **Submission system** — users submit entries for admin review
 - **Paginated directory** — browse entries in a classic "directory" format
-- **Entry fork model**: admins clone approved entries without modifying originals
+- **Moderation model** — Admins approve submissions by forking them into public copies; users retain control over their original entries
 - **Fast and lightweight** — built with FastAPI + Jinja2 + SQLite
 
 ## Roles
-
 | Role  | Add/Edit/Delete Own  | Submit to Public  | Edit Approved Public  | Approve/Reject |
 |-------|----------------------|-------------------|-----------------------|----------------|
 | User  | Yes                  | Yes               | No                    | No             |
@@ -65,23 +64,12 @@ server/
 └── static/
 ```
 
-## Tag Logic
-- Entries store tags as a list of strings
-- Filtering by tag is supported on both /rolodex and /
-- Tags are user-specific for private views, global for public
-
-## Fork Logic
-- Users can submit entries once
-- Admins can approve by forking → creates a new public copy
-- Original entry remains unchanged
-- Only admin-owned is_public_copy entries appear in /
-
 ## Testing
 Hyperindex includes a [pytest](https://docs.pytest.org/) suite covering server routes.
 
-### Running Tests
+To run tests:
 ```bash
-pytest                           # Run all tests
+pytest
 ```
 
 ## Environment

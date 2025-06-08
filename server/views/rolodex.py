@@ -11,7 +11,7 @@ from server.models.schemas import EntryCreate
 from server.services.entries import (
     create_entry, get_entry_by_id, soft_delete_entry
 )
-from server.services.tags import resolve_tags
+from server.utils.tags import resolve_tags
 from fastapi.templating import Jinja2Templates
 
 templates = Jinja2Templates(directory="server/templates")
