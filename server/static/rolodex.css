@@ -1,4 +1,4 @@
-/* Rolodex (Dashboard) Stylesheet */
+/* Rolodex Stylesheet */
 
 /* Reset */
 * {
@@ -85,6 +85,30 @@ form {
   background: none;
   border: none;
   padding: 0;
+}
+
+
+/* Global button style */
+.button {
+  font-family: inherit;
+  font-size: 0.85rem;
+  padding: 4px 10px;
+  border-radius: 3px;
+  cursor: pointer;
+  font-weight: bold;
+  border: 1px solid #bfa76f;
+  background-color: #f9eed1;
+  color: #000;
+  box-shadow: none;
+}
+
+.button:hover {
+  background-color: #e6d8a9;
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 /* Buttons (actions only) */
@@ -184,6 +208,11 @@ form {
   font-size: 0.75rem;
 }
 
+.tags span:hover{
+  background-color: #e6e3dc;
+}
+
+
 .tags span a {
   color: #2a1f0f;
   text-decoration: none;
@@ -191,7 +220,7 @@ form {
 }
 
 .tags span a:hover {
-  text-decoration: underline;
+  text-decoration: none;
 }
 
 /* Pagination */
@@ -234,4 +263,65 @@ form {
   font-weight: bold;
   color: #2a1f0f;
   margin-bottom: 0.3rem;
+}
+
+/* --- Accessibility & Responsive Enhancements --- */
+
+/* .sr-only class for screen readers */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* :focus for accessibility */
+input:focus,
+textarea:focus {
+  outline: 2px solid #cfa654;
+  background-color: #fffbe6;
+}
+
+/* Responsive layout tweaks */
+@media (max-width: 768px) {
+  body, .container {
+    padding: 0.5rem;
+  }
+
+  .card {
+    padding: 0.75rem;
+    margin: 1rem 0;
+  }
+
+  .card .actions {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .tags span {
+    font-size: 0.7rem;
+    padding: 2px 4px;
+  }
+
+  h1 {
+    font-size: 1.2rem;
+  }
+
+  h2 {
+    font-size: 1rem;
+  }
+
+  h3 {
+    font-size: 0.9rem;
+  }
+
+  input,
+  textarea {
+    font-size: 0.8rem;
+  }
 }

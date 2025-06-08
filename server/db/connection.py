@@ -4,7 +4,7 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 
 Base = declarative_base()
 
-from server.models.orm import Entry, User  # Ensure models are registered
+from server.models.entities import Entry, User  # Ensure models are registered
 
 DB_PATH = os.getenv("HYPERINDEX_SERVER_DB", "./hyperindex.db")
 DATABASE_URL = f"sqlite:///{DB_PATH}"

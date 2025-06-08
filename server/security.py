@@ -1,4 +1,4 @@
-from typing import Optional
+import os
 
 from fastapi import Request, Depends, HTTPException, status
 from jose import jwt, JWTError
@@ -6,8 +6,11 @@ from sqlalchemy.orm import Session
 from passlib.context import CryptContext
 
 from server.db.connection import SessionLocal
-from server.models.orm import User
-from .secrets import SECRET_KEY, ALGORITHM
+from server.models.entities import User
+
+# Load from environment variables if available, else fall back to hardcoded defaults
+SECRET_KEY = os.getenv("HYPERINDEX_SECRET_KEY", "super-secret-key-change-me")
+ALGORITHM = "HS256"
 
 # Password hashing
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")

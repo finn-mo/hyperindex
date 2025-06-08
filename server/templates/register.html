@@ -2,22 +2,22 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Register</title>
+  <title>Register - Hyperindex</title>
   <link rel="stylesheet" href="/static/yellowpages.css">
 </head>
 <body>
-  <div class="container">
+  <main class="container">
     <h1>Register</h1>
 
-    <form method="POST" action="/auth/register">
+    <form method="POST" action="/auth/register" aria-label="User registration form">
       <label for="username">Username:</label>
-      <input type="text" id="username" name="username" required>
+      <input type="text" id="username" name="username" required autocomplete="username">
 
       <label for="password">Password:</label>
-      <input type="password" id="password" name="password" required>
+      <input type="password" id="password" name="password" required autocomplete="new-password">
 
       <button type="submit">Register</button>
     </form>
-  </div>
+  </main>
 </body>
 </html>

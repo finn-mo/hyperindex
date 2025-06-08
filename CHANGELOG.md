@@ -1,20 +1,40 @@
-# Changelog
 ## [Unreleased]
 ### Added
-- User login and registration views with authentication
-- Personal dashboard at `/dashboard` for managing user-specific entries
-- Entry creation, editing, and soft-deletion via web UI
-- Pagination and tag-based filtering in both the dashboard and public index
-- Clickable tag links to filter entries by tag
-- Combined query and tag filtering on homepage
-- Tag parsing on submission form; tags saved and reused
-- Role-based visibility: dashboard only shows user-owned entries; homepage shows public entries only
+- Full web-first workflow:
+  - New `/rolodex` dashboard for managing personal bookmarks
+  - New `/` Yellowpages view for browsing admin-approved public entries
+  - Entry submission system: users submit, admins approve for Yellowpages inclusion
+- Role system:
+  - Admin-only approval and editing of public entries via `/admin`
+  - Admins manage Yellowpages entries via forks of user-submitted entries
+- Forking logic for public entries:
+  - Approved entries are cloned from user submissions
+  - Public entries are marked with `is_public_copy=True`
+  - Original user entry ID tracked in `original_id` for audit/history
+- Tag-aware search:
+  - Combined keyword + tag filtering
+  - Tags now link to filtered views across index and dashboard
+- Template and accessibility improvements:
+  - Added ARIA attributes, `.sr-only`, and proper `:focus` state
 
 ### Changed
-- Refactored project to live entirely on web layer
-- Fully deprecated CLI interface in favor of authenticated web dashboard at `/dashboard`
-- Rebuilt routes and API interaction to support web-first flow
-- Updated homepage template to show tag filters, count, and search context
+- Public index (`/`) now shows only admin-managed (approved) entries
+- Distinct view styling:
+  - `yellowpages.css` for public index
+  - `rolodex.css` for personal dashboard
+- Refactored project layout:
+  - Separated views into `views/rolodex.py`, `views/directory.py`, `views/admin.py`
+  - Moved business logic into `services/entries.py`, `services/users.py`
+  - Created `utils/tags.py` for reusable tag parsing and cleaning
+- Schema and ORM alignment:
+  - Renamed `description` → `notes`
+  - Converted notes field to `Text`
+  - Enforced `url` and `title` as non-null
+- Security & access control:
+  - Prevented editing of already-submitted entries
+  - Wrapped commits in `try/except` with rollback safety
+- Deprecated CLI mode:
+  - Removed CLI references from UI and documentation
 
 ## [2.0.0] - 2025-06-04
 ### Added
@@ -28,7 +48,7 @@
 
 ### Changed
 - Refactored project structure:
-  - Moved CLI and server into separate directories (`client/` and `server/`) to isolate responsibilities
+  - Moved CLI and server into separate directories (`client/`, `server/`)
   - Split database logic: `client.core.storage` for local entries, `server.db` for shared/public entries
 
 ## [1.0.0] - 2025-06-02
@@ -44,5 +64,5 @@
 - Input validation and ISO-formatted timestamps
 - Modular architecture: `core.storage`, `core.models`, `core.archive`, `core.config`
 
-[2.0.0]: https://github.com/finn-mo/hyperindex/compare/v1.0.0...v2.0.0
+[2.0.0]: https://github.com/finn-mo/hyperindex/compare/v1.0.0...v2.0.0  
 [1.0.0]: https://github.com/finn-mo/hyperindex/releases/tag/v1.0.0

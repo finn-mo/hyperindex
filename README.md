@@ -2,15 +2,25 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python Version](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/)
 [![Last Commit](https://img.shields.io/github/last-commit/finn-mo/hyperindex.svg)](https://github.com/finn-mo/hyperindex/commits/main)  
-Hyperindex lets you build a personal internet directory and browse a shared, user-curated index through a lightweight web interface. It features a personal dashboard and public directory powered by FastAPI and Jinja2. Add, tag, and annotate bookmarks, then browse or search them from your browser. Hyperindex supports multi-user login, and fast, tag-aware filtering.
+Hyperindex helps indie-web users build a personal internet directory and browse a shared, user-curated index through a lightweight web interface. It features a personal "Rolodex" and public "Yellowpages". Hyperindex supports multi-user login, and fast, tag-aware filtering. Built with FastAPI, Jinja2, and SQLite.
 
 ## Features
-- **User authentication** — register and log in to manage your own entries
-- **Personal dashboard** (`/dashboard`) — view, add, edit, and delete your own bookmarks
+- **Personal Rolodex** (`/rolodex`) — view, add, edit, and delete your own bookmarks
 - **Public Yellowpages** (`/`) — browse entries shared by all users
-- **Taggable, searchable entries** — filter results by tag and keyword
+- **User authentication** — register and log in to manage your own entries
+- **Tagging and search** with fast filtering and pagination
+- **Submission system**: users submit entries for admin review
 - **Paginated directory** — browse entries in a classic "directory" format
+- **Entry fork model**: admins clone approved entries without modifying originals
 - **Fast and lightweight** — built with FastAPI + Jinja2 + SQLite
+
+## Roles
+
+| Role  | Add/Edit/Delete Own  | Submit to Public  | Edit Approved Public  | Approve/Reject |
+|-------|----------------------|-------------------|-----------------------|----------------|
+| User  | Yes                  | Yes               | No                    | No             |
+| Admin | Yes                  | Yes               | Yes (forked copy only)| Yes            |
+
 
 ## Installation
 ```bash
@@ -28,48 +38,56 @@ pip-compile
 *(Requires [pip-tools](https://github.com/jazzband/pip-tools))*
 
 ## Usage
-### API
 Start the server:
 ```bash
 uvicorn server.main:app --reload
 ```
 Once running, visit `http://localhost:8000/` in your browser to access the web interface.
 
-Example requests:
-```bash
-curl http://localhost:8000/entries            # List entries
-curl http://localhost:8000/entries/1          # View one entry
-
-http POST http://localhost:8000/entries \     # Add a new entry
-    url="https://example.com" \
-    title="Example Site" \
-    tags:='["reference", "sample"]' \
-    description="A sample entry"
+## File Structure
+```
+server/
+├── main.py               # Entry point
+├── views/                # HTML-facing routes
+│   ├── rolodex.py
+│   ├── directory.py
+│   └── admin.py
+├── api/                  # JSON-only APIs
+│   ├── auth.py
+│   └── user.py
+├── services/             # Core business logic
+│   ├── entries.py
+│   └── users.py
+├── models/
+│   ├── entities.py       # SQLAlchemy models
+│   └── schemas.py        # Pydantic DTOs
+├── templates/
+└── static/
 ```
 
-## Data Storage
-- SQLite database: `hyperindex.db` (default)
-- Configurable via `HYPERINDEX_SERVER_DB` environment variable
+## Tag Logic
+- Entries store tags as a list of strings
+- Filtering by tag is supported on both /rolodex and /
+- Tags are user-specific for private views, global for public
 
-## Roadmap
-- PDF/image archival support
-- OAuth or token-based API access
-- Tag insights, summaries, and filtering tools
+## Fork Logic
+- Users can submit entries once
+- Admins can approve by forking → creates a new public copy
+- Original entry remains unchanged
+- Only admin-owned is_public_copy entries appear in /
 
 ## Testing
-Hyperindex includes a comprehensive [pytest](https://docs.pytest.org/) suite covering the CLI client, server routes, database logic, and archiving utilities.
+Hyperindex includes a [pytest](https://docs.pytest.org/) suite covering server routes.
 
 ### Running Tests
 ```bash
 pytest                           # Run all tests
-pytest -m routes                 # API route tests
 ```
 
-### Test Structure
-Tests are organized with `pytest.ini` markers:
-- `db`, `crud`, `routes`: Server-side components
-- `unit`, `slow`, `security`: Misc categories
-Tests run in temporary environments and mock all external services.
+## Environment
+- SQLite by default (`hyperindex.db`)
+- Configurable via `HYPERINDEX_SERVER_DB`
+- `.env` supported if using with deployment
 
 ## Changelog
 See [CHANGELOG.md](CHANGELOG.md) for release notes.

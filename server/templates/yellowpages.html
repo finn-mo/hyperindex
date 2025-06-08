@@ -2,15 +2,16 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Hyperindex Directory</title>
+  <title>Hyperindex Yellowpages</title>
   <link rel="stylesheet" href="/static/yellowpages.css">
 </head>
 <body>
-  <div class="container">
-    <h1>Hyperindex Directory</h1>
+  <div class="container" role="main">
+    <h1>Hyperindex Yellowpages</h1>
 
     <section>
-      <form method="get" action="/">
+      <h2 class="sr-only">Search Entries</h2>
+      <form method="get" action="/" role="search">
         <label for="q" class="sr-only">Search</label>
         <input id="q" type="text" name="q" value="{{ query or '' }}" placeholder="Search entries...">
         <button type="submit">Search</button>
@@ -33,8 +34,10 @@
     {% endif %}
 
     {% for entry in entries %}
-    <div class="card">
-      <h2><a href="{{ entry.url }}" target="_blank">{{ entry.title | e }}</a></h2>
+    <article class="card">
+      <h2>
+        <a href="{{ entry.url }}" target="_blank" rel="noopener">{{ entry.title | e }}</a>
+      </h2>
 
       {% if entry.tags %}
       <div class="tags">
@@ -47,30 +50,30 @@
       {% if entry.notes %}
       <div class="desc">{{ entry.notes | e }}</div>
       {% endif %}
-    </div>
+    </article>
     {% else %}
     <p>No entries found.</p>
     {% endfor %}
 
-    <div class="pagination">
+    <nav class="pagination" role="navigation" aria-label="Pagination">
       {% if has_prev %}
       <a href="?{% if query %}q={{ query }}&{% endif %}{% if tag %}tag={{ tag }}&{% endif %}page={{ page - 1 }}" class="page-link">← Prev</a>
       {% endif %}
 
       {% if page == 1 %}
-      <strong>1</strong>
+      <strong aria-current="page">1</strong>
       {% else %}
       <a href="?{% if query %}q={{ query }}&{% endif %}{% if tag %}tag={{ tag }}&{% endif %}page=1" class="page-link">1</a>
       {% endif %}
 
       {% if page > 4 %}
-      <span class="page-ellipsis">...</span>
+      <span class="page-ellipsis" aria-hidden="true">…</span>
       {% endif %}
 
       {% for p in range(page - 2, page + 3) %}
       {% if p > 1 and p < total_pages %}
         {% if p == page %}
-        <strong>{{ p }}</strong>
+        <strong aria-current="page">{{ p }}</strong>
         {% else %}
         <a href="?{% if query %}q={{ query }}&{% endif %}{% if tag %}tag={{ tag }}&{% endif %}page={{ p }}" class="page-link">{{ p }}</a>
         {% endif %}
@@ -78,12 +81,12 @@
       {% endfor %}
 
       {% if page < total_pages - 3 %}
-      <span class="page-ellipsis">...</span>
+      <span class="page-ellipsis" aria-hidden="true">…</span>
       {% endif %}
 
       {% if total_pages > 1 %}
         {% if page == total_pages %}
-        <strong>{{ total_pages }}</strong>
+        <strong aria-current="page">{{ total_pages }}</strong>
         {% else %}
         <a href="?{% if query %}q={{ query }}&{% endif %}{% if tag %}tag={{ tag }}&{% endif %}page={{ total_pages }}" class="page-link">{{ total_pages }}</a>
         {% endif %}
@@ -92,7 +95,7 @@
       {% if has_next %}
       <a href="?{% if query %}q={{ query }}&{% endif %}{% if tag %}tag={{ tag }}&{% endif %}page={{ page + 1 }}" class="page-link">Next →</a>
       {% endif %}
-    </div>
+    </nav>
   </div>
 </body>
 </html>

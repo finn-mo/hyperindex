@@ -10,44 +10,46 @@
     <h1>Admin Panel</h1>
     <p>Welcome, {{ user.username }}!</p>
 
-    <section>
-      <h2>Pending Submissions</h2>
-      {% for entry in pending_entries %}
-      <div class="card">
-        <h3>{{ entry.title }}</h3>
-        <p><a href="{{ entry.url }}" target="_blank">{{ entry.url }}</a></p>
-        <p><strong>Owner:</strong> {{ entry.owner.username }}</p>
-        <p class="desc">{{ entry.notes }}</p>
-        <div class="actions">
-          <form method="POST" action="/admin/approve/{{ entry.id }}">
-            <button type="submit">Approve</button>
-          </form>
-          <form method="POST" action="/admin/reject/{{ entry.id }}">
-            <button type="submit">Reject</button>
+    <main role="main">
+      <section aria-labelledby="pending-heading">
+        <h2 id="pending-heading">Pending Submissions</h2>
+        {% for entry in pending_entries %}
+        <div class="card">
+          <h3>{{ entry.title }}</h3>
+          <p><a href="{{ entry.url }}" target="_blank">{{ entry.url }}</a></p>
+          <p><strong>Owner:</strong> {{ entry.owner.username }}</p>
+          <p class="desc">{{ entry.notes }}</p>
+          <div class="actions">
+            <form method="POST" action="/admin/approve/{{ entry.id }}">
+              <button type="submit">Approve</button>
+            </form>
+            <form method="POST" action="/admin/reject/{{ entry.id }}">
+              <button type="submit">Reject</button>
+            </form>
+          </div>
+        </div>
+        {% else %}
+        <p>No entries pending review.</p>
+        {% endfor %}
+      </section>
+
+      <section aria-labelledby="public-heading">
+        <h2 id="public-heading">Public Entries (Yellowpages)</h2>
+        {% for entry in public_entries %}
+        <div class="card">
+          <h3>{{ entry.title }}</h3>
+          <p><a href="{{ entry.url }}" target="_blank">{{ entry.url }}</a></p>
+          <p><strong>Owner:</strong> {{ entry.owner.username }}</p>
+          <p class="desc">{{ entry.notes }}</p>
+          <form method="GET" action="/entries/{{ entry.id }}/edit">
+            <button type="submit">Edit</button>
           </form>
         </div>
-      </div>
-      {% else %}
-      <p>No entries pending review.</p>
-      {% endfor %}
-    </section>
-
-    <section>
-      <h2>Public Entries (Yellowpages)</h2>
-      {% for entry in public_entries %}
-      <div class="card">
-        <h3>{{ entry.title }}</h3>
-        <p><a href="{{ entry.url }}" target="_blank">{{ entry.url }}</a></p>
-        <p><strong>Owner:</strong> {{ entry.owner.username }}</p>
-        <p class="desc">{{ entry.notes }}</p>
-        <form method="GET" action="/entries/{{ entry.id }}/edit">
-          <button type="submit">Edit</button>
-        </form>
-      </div>
-      {% else %}
-      <p>No public entries.</p>
-      {% endfor %}
-    </section>
+        {% else %}
+        <p>No public entries.</p>
+        {% endfor %}
+      </section>
+    </main>
   </div>
 </body>
 </html>
