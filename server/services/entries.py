@@ -85,24 +85,38 @@ class EntryService:
         total = query.count()
         entries = query.order_by(Entry.id.desc()).offset(offset).limit(limit).all()
         return entries, total
-
+    
     @staticmethod
-    def search_public_entries(db: Session, query: Optional[str], tag: Optional[str], limit: int, offset: int) -> Tuple[List[Entry], int]:
-        base_query = db.query(Entry).filter(Entry.is_public_copy == True)
+    def filter_entries(
+        db: Session,
+        user_id: Optional[int] = None,
+        public_only: bool = False,
+        tag: Optional[str] = None,
+        query: Optional[str] = None,
+        limit: int = 10,
+        offset: int = 0
+    ) -> Tuple[List[Entry], int]:
+        q = db.query(Entry).options(joinedload(Entry.tags)).filter(Entry.is_deleted == False)
+
+        if user_id is not None:
+            q = q.filter(Entry.user_id == user_id, Entry.is_public_copy == False)
+
+        if public_only:
+            q = q.filter(Entry.is_public_copy == True)
+
+        if tag:
+            q = q.filter(Entry.tags.any(Tag.name == tag))
 
         if query:
-            search = f"%{query}%"
-            base_query = base_query.filter(
+            pattern = f"%{query}%"
+            q = q.filter(
                 or_(
-                    Entry.title.ilike(search),
-                    Entry.notes.ilike(search),
-                    Entry.url.ilike(search),
+                    Entry.title.ilike(pattern),
+                    Entry.notes.ilike(pattern),
+                    Entry.url.ilike(pattern),
                 )
             )
 
-        if tag:
-            base_query = base_query.filter(Entry.tags.any(Tag.name == tag))
-
-        total = base_query.count()
-        entries = base_query.order_by(Entry.id.desc()).offset(offset).limit(limit).all()
+        total = q.count()
+        entries = q.order_by(Entry.id.desc()).offset(offset).limit(limit).all()
         return entries, total

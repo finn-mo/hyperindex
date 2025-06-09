@@ -26,16 +26,14 @@ def rolodex(
     db: Session = Depends(get_db),
 ):
     offset = (page - 1) * limit
-    query = db.query(Entry).filter(
-        Entry.user_id == user.id,
-        Entry.is_deleted == False,
-        Entry.is_public_copy == False
+    entries, total = EntryService.filter_entries(
+        db,
+        user_id=user.id,
+        tag=tag,
+        limit=limit,
+        offset=offset
     )
-    if tag:
-        query = query.filter(Entry.tags.any(name=tag))
 
-    total = query.count()
-    entries = query.order_by(Entry.id.desc()).offset(offset).limit(limit).all()
     all_tags = (
         db.query(Entry)
         .filter(Entry.user_id == user.id, Entry.is_deleted == False)
