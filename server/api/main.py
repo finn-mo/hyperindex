@@ -4,8 +4,6 @@ from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 
 from server.db.connection import init_db
-from server.api.auth import router as auth_router
-from server.api.user import router as user_router
 from server.views.rolodex import router as rolodex_router
 from server.views.yellowpages import router as yellowpages_router
 from server.views.admin import router as admin_router
@@ -15,10 +13,6 @@ app = FastAPI()
 init_db()
 
 app.mount("/static", StaticFiles(directory="server/static"), name="static")
-
-# API routers
-app.include_router(auth_router, prefix="/auth")
-app.include_router(user_router, prefix="/user")
 
 # HTML view routers
 app.include_router(rolodex_router)

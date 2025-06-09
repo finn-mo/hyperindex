@@ -7,7 +7,7 @@ from typing import Optional
 
 from server.models.entities import User
 from server.security import get_db
-from server.services.entries import search_public_entries
+from server.services.entries import EntryService
 from fastapi.templating import Jinja2Templates
 
 templates = Jinja2Templates(directory="server/templates")
@@ -35,7 +35,7 @@ def yellowpages(
             pass
 
     offset = (page - 1) * limit
-    entries, total = search_public_entries(db, query=q, tag=tag, limit=limit, offset=offset)
+    entries, total = EntryService.search_public_entries(db, query=q, tag=tag, limit=limit, offset=offset)
     total_pages = (total // limit) + (1 if total % limit > 0 else 0)
 
     return templates.TemplateResponse("yellowpages.html", {

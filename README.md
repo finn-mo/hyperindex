@@ -47,27 +47,26 @@ Once running, visit `http://localhost:8000/` in your browser to access the web i
 ## File Structure
 ```
 server/
-├── api/
-│   ├── main.py           # Entry point
-│   ├── auth.py
-│   └── user.py
+├── api/                  # API entrypoint and future programmatic interface
+│   ├── main.py
 ├── views/                # HTML-facing routes
 │   ├── admin.py
 │   ├── auth.py
 │   ├── rolodex.py
 │   └── yellowpages.py
-├── services/             # Core business logic
+├── templates/            # Jinja2 templates (includes base layout, partials)
+├── static/               # CSS (rolodex.css, yellowpages.css)
+├── models/               # SQLAlchemy and Pydantic models
+│   ├── entities.py
+│   └── schemas.py
+├── services/             # All business logic
 │   └── entries.py
-├── db/
-│   └── connection.py
-├── utils/
+├── utils/                # Utility functions
 │   └── tags.py
-├── models/
-│   ├── entities.py       # SQLAlchemy models
-│   └── schemas.py        # Pydantic DTOs
-├── security.py
-├── templates/            # HTML Templates
-└── static/               # CSS Styling
+├── db/                   # Database connection
+│   └── connection.py
+└── security.py           # Central auth/token logic
+
 ```
 
 ## Testing

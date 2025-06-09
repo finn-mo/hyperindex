@@ -8,9 +8,7 @@ from typing import Optional
 from server.security import get_current_user, get_db
 from server.models.entities import User, Entry, Tag
 from server.models.schemas import EntryCreate
-from server.services.entries import (
-    create_entry, get_entry_by_id, soft_delete_entry
-)
+from server.services.entries import EntryService
 from server.utils.tags import resolve_tags
 from fastapi.templating import Jinja2Templates
 
@@ -79,7 +77,7 @@ def create_entry_from_form(
 ):
     tag_list = [t.strip() for t in tags.split(",") if t.strip()]
     entry_in = EntryCreate(url=url, title=title, notes=notes, tags=tag_list)
-    return create_entry(db, entry_in, user.id), RedirectResponse("/rolodex", status_code=302)
+    return EntryService.create_entry(db, entry_in, user.id), RedirectResponse("/rolodex", status_code=302)
 
 
 @router.get("/entries/{entry_id}/edit", response_class=HTMLResponse)
@@ -91,7 +89,7 @@ def edit_entry_form(
 ):
     entry = (
         db.query(Entry).get(entry_id)
-        if user.is_admin else get_entry_by_id(db, entry_id, user.id)
+        if user.is_admin else EntryService.get_entry_by_id(db, entry_id, user.id)
     )
     if not entry:
         raise HTTPException(status_code=404, detail="Entry not found")
@@ -128,7 +126,7 @@ def edit_entry(
 
 @router.post("/entries/{entry_id}/delete")
 def delete_entry(entry_id: int, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
-    soft_delete_entry(db, entry_id, user.id)
+    EntryService.soft_delete_entry(db, entry_id, user.id)
     return RedirectResponse("/rolodex", status_code=302)
 
 
@@ -138,7 +136,7 @@ def submit_entry_for_review(
     user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    entry = get_entry_by_id(db, entry_id, user.id)
+    entry = EntryService.get_entry_by_id(db, entry_id, user.id)
     if not entry or entry.is_deleted:
         raise HTTPException(status_code=404, detail="Entry not found")
     if entry.is_public_copy:
