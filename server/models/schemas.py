@@ -1,5 +1,6 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import List, Optional
+
 
 class TagSchema(BaseModel):
     name: str
@@ -9,7 +10,7 @@ class EntryBase(BaseModel):
     title: Optional[str]
     notes: Optional[str]
     is_public: Optional[bool] = False
-    tags: Optional[List[str]] = []
+    tags: Optional[List[str]] = Field(default_factory=list)
 
 class EntryCreate(EntryBase):
     pass

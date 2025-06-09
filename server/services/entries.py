@@ -12,6 +12,16 @@ from server.models.schemas import EntryCreate
 class TagService:
     @staticmethod
     def resolve_tags(db: Session, tags: List[str]) -> List[Tag]:
+        """
+        Ensure all tag names exist as Tag objects in the database.
+
+        Args:
+            db (Session): SQLAlchemy session.
+            tags (List[str]): List of tag names to resolve or create.
+
+        Returns:
+            List[Tag]: Corresponding Tag objects, newly created if missing.
+        """
         tag_objects = []
         for tag_name in tags:
             tag = db.query(Tag).filter_by(name=tag_name).first()
@@ -26,6 +36,20 @@ class TagService:
 class EntryService:
     @staticmethod
     def get_entry_by_id(db: Session, entry_id: int, user_id: Optional[int] = None) -> Entry:
+        """
+        Retrieve a single entry by its ID, optionally scoped to a specific user.
+
+        Args:
+            db (Session): SQLAlchemy session.
+            entry_id (int): ID of the entry to fetch.
+            user_id (Optional[int]): If provided, restrict result to entries owned by the user.
+
+        Returns:
+            Entry: The matched entry object.
+
+        Raises:
+            NoResultFound: If the entry does not exist or is not accessible by the user.
+        """
         query = db.query(Entry).options(joinedload(Entry.tags)).filter(Entry.id == entry_id)
         if user_id is not None:
             query = query.filter(Entry.user_id == user_id)
@@ -36,6 +60,17 @@ class EntryService:
 
     @staticmethod
     def create_entry(db: Session, entry_in: EntryCreate, user_id: int) -> Entry:
+        """
+        Create a new entry for a user, resolving its associated tags.
+
+        Args:
+            db (Session): SQLAlchemy session.
+            entry_in (EntryCreate): Input data for the new entry.
+            user_id (int): ID of the user creating the entry.
+
+        Returns:
+            Entry: The newly created entry.
+        """
         tags = TagService.resolve_tags(db, entry_in.tags or [])
         entry = Entry(
             url=entry_in.url,
@@ -52,6 +87,21 @@ class EntryService:
 
     @staticmethod
     def update_entry(db: Session, entry_id: int, user_id: int, data: EntryCreate) -> Entry:
+        """
+        Update an existing entry owned by the user with new data and tags.
+
+        Args:
+            db (Session): SQLAlchemy session.
+            entry_id (int): ID of the entry to update.
+            user_id (int): ID of the user who must own the entry.
+            data (EntryCreate): New entry data.
+
+        Returns:
+            Entry: The updated entry.
+
+        Raises:
+            NoResultFound: If the entry is not found or not owned by the user.
+        """
         entry = EntryService.get_entry_by_id(db, entry_id, user_id)
         entry.url = data.url
         entry.title = data.title
@@ -63,28 +113,37 @@ class EntryService:
 
     @staticmethod
     def soft_delete_entry(db: Session, entry_id: int, user_id: int) -> None:
+        """
+        Soft-delete a user-owned entry by marking it as deleted.
+
+        Args:
+            db (Session): SQLAlchemy session.
+            entry_id (int): ID of the entry.
+            user_id (int): ID of the user who must own the entry.
+
+        Returns:
+            None
+        """
         entry = EntryService.get_entry_by_id(db, entry_id, user_id)
         entry.is_deleted = True
         db.commit()
 
     @staticmethod
     def restore_entry(db: Session, entry_id: int, user_id: int) -> None:
+        """
+        Restore a previously soft-deleted entry owned by the user.
+
+        Args:
+            db (Session): SQLAlchemy session.
+            entry_id (int): ID of the entry.
+            user_id (int): ID of the user who must own the entry.
+
+        Returns:
+            None
+        """
         entry = EntryService.get_entry_by_id(db, entry_id, user_id)
         entry.is_deleted = False
         db.commit()
-
-    @staticmethod
-    def get_entries_by_user(db: Session, user_id: int, tag: Optional[str] = None, limit: int = 10, offset: int = 0) -> Tuple[List[Entry], int]:
-        query = (
-            db.query(Entry)
-            .options(joinedload(Entry.tags))
-            .filter(Entry.user_id == user_id, Entry.is_deleted == False, Entry.is_public_copy == False)
-        )
-        if tag:
-            query = query.filter(Entry.tags.any(Tag.name == tag))
-        total = query.count()
-        entries = query.order_by(Entry.id.desc()).offset(offset).limit(limit).all()
-        return entries, total
     
     @staticmethod
     def filter_entries(
@@ -96,6 +155,21 @@ class EntryService:
         limit: int = 10,
         offset: int = 0
     ) -> Tuple[List[Entry], int]:
+        """
+        Unified entry search/filter method. Supports user scope, public scope, tag filtering, and text search.
+
+        Args:
+            db (Session): SQLAlchemy session.
+            user_id (Optional[int]): If provided, limits to entries owned by the user.
+            public_only (bool): If True, limits to admin-managed public entries.
+            tag (Optional[str]): If provided, filters entries by tag name.
+            query (Optional[str]): Case-insensitive search across title, notes, and URL.
+            limit (int): Max number of entries to return.
+            offset (int): Number of entries to skip.
+
+        Returns:
+            Tuple[List[Entry], int]: List of entries and total result count.
+        """
         q = db.query(Entry).options(joinedload(Entry.tags)).filter(Entry.is_deleted == False)
 
         if user_id is not None:
