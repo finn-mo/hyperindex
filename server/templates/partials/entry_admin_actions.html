@@ -1,8 +1,4 @@
 <div class="actions">
-  {% if entry.owner %}
-    <p class="meta"><strong>Owner:</strong> {{ entry.owner.username }}</p>
-  {% endif %}
-
   {% if not entry.is_public_copy %}
     <form method="POST" action="/admin/approve/{{ entry.id }}">
       <button type="submit">Approve</button>
@@ -18,5 +14,9 @@
     <form method="POST" action="/entries/{{ entry.id }}/delete" onsubmit="return confirm('Are you sure you want to delete this entry?');">
       <button type="submit">Delete</button>
     </form>
+  {% endif %}
+
+  {% if entry.owner %}
+    <p class="meta"><strong>Owner:</strong> {{ entry.owner.username }}</p>
   {% endif %}
 </div>

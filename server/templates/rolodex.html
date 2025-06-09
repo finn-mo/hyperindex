@@ -28,6 +28,7 @@
     <p>Showing <strong>{{ entries|length }}</strong> of <strong>{{ total }}</strong> entries (page {{ page }} of {{ total_pages }})</p>
 
     {% for entry in entries %}
+      {% set card_index = loop.index %}
       {% set tag_prefix = '/rolodex?tag=' %}
       {% set show_actions = True %}
       {% include "partials/entry_card.html" %}

@@ -7,7 +7,7 @@ Hyperindex is a lightweight web app for curating and sharing independent website
 ## Features
 - **Personal Rolodex** (`/rolodex`) — view, add, edit, and delete your own bookmarks
 - **Public Yellow Pages** (`/`) — browse entries shared by all users
-- **User authentication** — register and log in to manage your own entries
+- **User authentication** — register and log in to manage personal entries
 - **Tagging and search** — with fast filtering and pagination
 - **Submission system** — users submit entries for admin review
 - **Paginated directory** — browse entries in a classic "directory" format
@@ -47,22 +47,27 @@ Once running, visit `http://localhost:8000/` in your browser to access the web i
 ## File Structure
 ```
 server/
-├── main.py               # Entry point
-├── views/                # HTML-facing routes
-│   ├── rolodex.py
-│   ├── directory.py
-│   └── admin.py
-├── api/                  # JSON-only APIs
+├── api/
+│   ├── main.py           # Entry point
 │   ├── auth.py
 │   └── user.py
+├── views/                # HTML-facing routes
+│   ├── admin.py
+│   ├── auth.py
+│   ├── rolodex.py
+│   └── yellowpages.py
 ├── services/             # Core business logic
-│   ├── entries.py
-│   └── users.py
+│   └── entries.py
+├── db/
+│   └── connection.py
+├── utils/
+│   └── tags.py
 ├── models/
 │   ├── entities.py       # SQLAlchemy models
 │   └── schemas.py        # Pydantic DTOs
-├── templates/
-└── static/
+├── security.py
+├── templates/            # HTML Templates
+└── static/               # CSS Styling
 ```
 
 ## Testing

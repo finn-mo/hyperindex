@@ -7,11 +7,9 @@
     <button type="submit">Delete</button>
   </form>
 
-  {% if not entry.is_public_copy %}
-    <form method="POST" action="/entries/{{ entry.id }}/submit">
-      <button type="submit" {% if entry.submitted_to_public %}disabled{% endif %}>
-        Submit to Yellowpages
-      </button>
-    </form>
-  {% endif %}
+  <form method="POST" action="/entries/{{ entry.id }}/submit">
+    <button type="submit" {% if entry.submitted_to_public or entry.is_public_copy %}disabled{% endif %}>
+      Submit to Yellowpages
+    </button>
+  </form>
 </div>

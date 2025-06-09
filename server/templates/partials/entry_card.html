@@ -1,5 +1,6 @@
-<article class="card">
+<article class="card" data-label="{{ 'Entry ' ~ card_index if card_index is defined }}">
   <h2><a href="{{ entry.url }}" target="_blank" rel="noopener">{{ entry.title | e }}</a></h2>
+
 
   {% if entry.tags %}
     <div class="tags">

@@ -1,5 +1,3 @@
-/* Rolodex Stylesheet */
-
 /* Reset */
 * {
   margin: 0;
@@ -8,7 +6,7 @@
 }
 
 /* Base layout */
-body {
+body, .container {
   background-color: #f6f1e7;
   font-family: "Arial Narrow", Arial, sans-serif;
   font-size: 0.85rem;
@@ -19,17 +17,16 @@ body {
   padding: 1rem;
 }
 
-.container {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 1rem;
+/* Typography */
+h1, h2, h3 {
+  color: #3a2f1f;
+  font-family: inherit;
+  font-weight: bold;
 }
 
-/* Typography */
 h1 {
   font-size: 1.4rem;
   margin-bottom: 1rem;
-  color: #3a2f1f;
   border-bottom: 1px solid #bbb;
   padding-bottom: 0.25rem;
   text-transform: uppercase;
@@ -39,13 +36,13 @@ h1 {
 h2 {
   font-size: 1.1rem;
   margin: 1rem 0 0.5rem;
-  color: #3a2f1f;
 }
 
 h3 {
-  font-size: 1rem;
-  text-transform: none;
-  color: #2a1f0f;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.3rem;
 }
 
 p {
@@ -65,11 +62,8 @@ label {
   margin-right: 0.5rem;
 }
 
-textarea,
-input[type="text"],
-input[type="password"],
-input[type="email"],
-input[type="url"] {
+input,
+textarea {
   font-family: inherit;
   font-size: 0.85rem;
   padding: 4px 6px;
@@ -87,8 +81,9 @@ form {
   padding: 0;
 }
 
-
-/* Global button style */
+/* Button styles */
+button,
+.clear-btn,
 .button {
   font-family: inherit;
   font-size: 0.85rem;
@@ -102,48 +97,21 @@ form {
   box-shadow: none;
 }
 
+button:hover,
+.clear-btn:hover,
 .button:hover {
   background-color: #e6d8a9;
 }
 
-.button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-/* Buttons (actions only) */
-.card .actions button,
-.card .actions .clear-btn {
-  font-family: inherit;
-  font-size: 0.85rem;
-  padding: 4px 10px;
-  border-radius: 3px;
-  cursor: pointer;
-  font-weight: bold;
-  border: 1px solid #bfa76f;
-  background-color: #f9eed1;
-  color: #000;
-  box-shadow: none;
-}
-
-.card .actions button:hover,
-.card .actions .clear-btn:hover {
-  background-color: #e6d8a9;
-}
-
-.card .actions button:disabled {
+button:disabled,
+.clear-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
 /* Card layout */
 .card {
-  background: repeating-linear-gradient(
-    to bottom,
-    #fdfaf5,
-    #fdfaf5 22px,
-    #f0e9dd 23px
-  );
+  background: repeating-linear-gradient(to bottom, #fdfaf5, #fdfaf5 22px, #f0e9dd 23px);
   border: 1px solid #bfa76f;
   border-left: 6px solid #cfa654;
   box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
@@ -208,19 +176,14 @@ form {
   font-size: 0.75rem;
 }
 
-.tags span:hover{
+.tags span:hover {
   background-color: #e6e3dc;
 }
-
 
 .tags span a {
   color: #2a1f0f;
   text-decoration: none;
   font-weight: bold;
-}
-
-.tags span a:hover {
-  text-decoration: none;
 }
 
 /* Pagination */
@@ -241,10 +204,7 @@ form {
   text-decoration: none;
 }
 
-.page-link:hover {
-  background-color: #e6d8a9;
-}
-
+.page-link:hover,
 .pagination strong {
   background-color: #e6d8a9;
 }
@@ -255,19 +215,7 @@ form {
   font-weight: bold;
 }
 
-.card h3 {
-  font-family: "Arial Narrow", Arial, sans-serif;
-  font-size: 0.95rem;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  font-weight: bold;
-  color: #2a1f0f;
-  margin-bottom: 0.3rem;
-}
-
-/* --- Accessibility & Responsive Enhancements --- */
-
-/* .sr-only class for screen readers */
+/* Accessibility */
 .sr-only {
   position: absolute;
   width: 1px;
@@ -280,14 +228,13 @@ form {
   border: 0;
 }
 
-/* :focus for accessibility */
 input:focus,
 textarea:focus {
   outline: 2px solid #cfa654;
   background-color: #fffbe6;
 }
 
-/* Responsive layout tweaks */
+/* Responsive */
 @media (max-width: 768px) {
   body, .container {
     padding: 0.5rem;
@@ -308,20 +255,11 @@ textarea:focus {
     padding: 2px 4px;
   }
 
-  h1 {
-    font-size: 1.2rem;
-  }
+  h1 { font-size: 1.2rem; }
+  h2 { font-size: 1rem; }
+  h3 { font-size: 0.9rem; }
 
-  h2 {
-    font-size: 1rem;
-  }
-
-  h3 {
-    font-size: 0.9rem;
-  }
-
-  input,
-  textarea {
+  input, textarea {
     font-size: 0.8rem;
   }
 }
