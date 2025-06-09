@@ -1,7 +1,7 @@
 # Hyperindex – Internet Rolodex and Yellow Pages
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python Version](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/)
-[![Last Commit](https://img.shields.io/github/last-commit/finn-mo/hyperindex?cacheSeconds=3600)](https://github.com/finn-mo/hyperindex/commits/main)
+[![Last Commit](https://img.shields.io/github/last-commit/finn-mo/hyperindex?cacheSeconds=3600)](https://github.com/finn-mo/hyperindex/commits/main)  
 Hyperindex is a lightweight web app for curating and sharing independent websites. Inspired by the early internet, it lets users build a personal Rolodex and explore a shared Yellow Pages of user-submitted sites. Designed for the indie web and independent browsing. Built with FastAPI, Jinja2, and SQLite.
 
 ## Features
