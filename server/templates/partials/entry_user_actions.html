@@ -1,0 +1,17 @@
+<div class="actions">
+  <form method="GET" action="/entries/{{ entry.id }}/edit">
+    <button type="submit">Edit</button>
+  </form>
+
+  <form method="POST" action="/entries/{{ entry.id }}/delete" onsubmit="return confirm('Are you sure you want to delete this entry?');">
+    <button type="submit">Delete</button>
+  </form>
+
+  {% if not entry.is_public_copy %}
+    <form method="POST" action="/entries/{{ entry.id }}/submit">
+      <button type="submit" {% if entry.submitted_to_public %}disabled{% endif %}>
+        Submit to Yellowpages
+      </button>
+    </form>
+  {% endif %}
+</div>

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}Hyperindex{% endblock %}</title>
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+  <div class="container" role="main">
+    {% include "partials/nav.html" %}
+    <main>
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+</body>
+</html>
