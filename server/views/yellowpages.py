@@ -1,12 +1,9 @@
 from fastapi import APIRouter, Request, Depends, Query, Cookie
-from jose import JWTError, jwt
-from server.security import SECRET_KEY, ALGORITHM
 from fastapi.responses import HTMLResponse
 from sqlalchemy.orm import Session
 from typing import Optional
 
-from server.models.entities import User
-from server.security import get_db
+from server.security import get_db, get_optional_user
 from server.services.entries import EntryService
 from fastapi.templating import Jinja2Templates
 
@@ -24,15 +21,7 @@ def yellowpages(
     access_token: Optional[str] = Cookie(None),
     db: Session = Depends(get_db)
 ):
-    user = None
-    if access_token:
-        try:
-            payload = jwt.decode(access_token, SECRET_KEY, algorithms=[ALGORITHM])
-            username = payload.get("sub")
-            if username:
-                user = db.query(User).filter_by(username=username).first()
-        except JWTError:
-            pass
+    user = get_optional_user(access_token, db)
 
     offset = (page - 1) * limit
     entries, total = EntryService.filter_entries(

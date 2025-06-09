@@ -35,5 +35,4 @@ build/
 *.log
 
 # Server database
-server/data/*.db
 *.db
