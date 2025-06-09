@@ -1,7 +1,8 @@
 # server/main.py
-from fastapi import FastAPI, Response
-from fastapi.templating import Jinja2Templates
+from fastapi import FastAPI, Response, Request
 from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from server.db.connection import init_db
 from server.views.rolodex import router as rolodex_router
@@ -21,6 +22,22 @@ app.include_router(admin_router)
 app.include_router(auth_view_router)
 
 templates = Jinja2Templates(directory="server/templates")
+
+@app.exception_handler(StarletteHTTPException)
+async def http_exception_handler(request: Request, exc: StarletteHTTPException):
+    status = exc.status_code
+    template_name = "error.html"
+    context = {"request": request, "status_code": status, "detail": exc.detail}
+    return templates.TemplateResponse(template_name, context, status_code=status)
+
+
+@app.exception_handler(Exception)
+async def unhandled_exception_handler(request: Request, exc: Exception):
+    return templates.TemplateResponse(
+        "error.html",
+        {"request": request, "status_code": 500, "detail": "Internal server error"},
+        status_code=500
+    )
 
 
 @app.get("/favicon.ico", include_in_schema=False)
