@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Entry - Hyperindex{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{{ url_for('static', path='rolodex.css') }}">
+{% endblock %}
+
+{% block body_class %}theme-rolodex{% endblock %}
+
+{% block content %}
+  <h1>About</h1>
+
+
+  <p>
+    Hyperindex is a lightweight web app for curating and sharing independent websites. Inspired by the early internet, it lets users build a personal Rolodex and explore a shared Yellow Pages of user-submitted sites. Designed for the indie web and independent browsing.
+  </p>
+{% endblock %}

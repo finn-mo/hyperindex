@@ -9,6 +9,8 @@ from server.views.rolodex import router as rolodex_router
 from server.views.yellowpages import router as yellowpages_router
 from server.views.admin import router as admin_router
 from server.views.auth import router as auth_view_router
+from server.views.misc import router as misc_router
+
 
 app = FastAPI()
 init_db()
@@ -20,6 +22,7 @@ app.include_router(rolodex_router)
 app.include_router(yellowpages_router)
 app.include_router(admin_router)
 app.include_router(auth_view_router)
+app.include_router(misc_router)
 
 templates = Jinja2Templates(directory="server/templates")
 
