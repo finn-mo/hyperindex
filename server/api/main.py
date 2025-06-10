@@ -31,12 +31,13 @@ async def http_exception_handler(request: Request, exc: StarletteHTTPException):
     status = exc.status_code
     template_name = "error.html"
     context = {"request": request, "status_code": status, "detail": exc.detail}
-    return templates.TemplateResponse(template_name, context, status_code=status)
+    return templates.TemplateResponse(request, template_name, context, status_code=status)
 
 
 @app.exception_handler(Exception)
 async def unhandled_exception_handler(request: Request, exc: Exception):
     return templates.TemplateResponse(
+        request,
         "error.html",
         {"request": request, "status_code": 500, "detail": "Internal server error"},
         status_code=500

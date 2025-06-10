@@ -50,8 +50,7 @@ def rolodex(
     )
 
     total_pages = (total // limit) + (1 if total % limit > 0 else 0)
-    return templates.TemplateResponse("rolodex.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "rolodex.html", {
         "user": user,
         "entries": entries,
         "page": page,
@@ -68,7 +67,7 @@ def rolodex(
 
 @router.get("/entries/new", response_class=HTMLResponse)
 def new_entry_form(request: Request, user: User = Depends(get_current_user)):
-    return templates.TemplateResponse("new_entry.html", {"request": request, "user": user})
+    return templates.TemplateResponse(request, "new_entry.html", {"user": user})
 
 
 @router.post("/entries/new")
@@ -94,13 +93,13 @@ def edit_entry_form(
     db: Session = Depends(get_db)
 ):
     entry = (
-        db.query(Entry).get(entry_id)
+        db.get(Entry, entry_id)
         if user.is_admin else EntryService.get_entry_by_id(db, entry_id, user.id)
     )
     if not entry:
         raise HTTPException(status_code=404, detail="Entry not found")
 
-    return templates.TemplateResponse("edit_entry.html", {"request": request, "entry": entry})
+    return templates.TemplateResponse(request, "edit_entry.html", {"entry": entry})
 
 
 @router.post("/entries/{entry_id}/edit")

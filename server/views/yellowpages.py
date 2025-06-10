@@ -34,8 +34,7 @@ def yellowpages(
     )
     total_pages = (total // limit) + (1 if total % limit > 0 else 0)
 
-    return templates.TemplateResponse("yellowpages.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "yellowpages.html", {
         "user": user,
         "entries": entries,
         "query": q,

@@ -17,4 +17,4 @@ def about_page(
     db: Session = Depends(get_db)
 ):
     user: User = get_optional_user(access_token, db)
-    return templates.TemplateResponse("about.html", {"request": request, "user": user})
+    return templates.TemplateResponse(request, "about.html", {"request": request, "user": user})

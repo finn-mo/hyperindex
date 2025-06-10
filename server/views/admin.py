@@ -28,7 +28,7 @@ def admin_panel(
         Entry.is_public_copy == True
     ).order_by(Entry.id.desc()).all()
 
-    return templates.TemplateResponse("admin_panel.html", {
+    return templates.TemplateResponse(request, "admin_panel.html", {
         "request": request,
         "user": user,
         "pending_entries": pending_entries,
