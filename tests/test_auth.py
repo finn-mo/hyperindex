@@ -1,7 +1,7 @@
 def test_register_new_user(client):
-    response = client.post("/register", data={"username": "newuser", "password": "newpass"})
-    assert response.status_code == 200
-    assert response.json()["status"] == "registered"
+    response = client.post("/register", data={"username": "newuser", "password": "newpass"}, follow_redirects=False)
+    assert response.status_code in (302, 303)
+    assert response.headers["location"] == "/login"
 
 
 def test_register_duplicate_user(client):
