@@ -18,19 +18,27 @@ router = APIRouter()
 def rolodex(
     request: Request,
     tag: Optional[str] = Query(None),
+    q: Optional[str] = Query(None),
     page: int = Query(1, ge=1),
     limit: int = 10,
     user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
+
     offset = (page - 1) * limit
-    entries, total = EntryService.filter_entries(
-        db,
-        user_id=user.id,
-        tag=tag,
-        limit=limit,
-        offset=offset
-    )
+
+    if q:
+        entries, total = EntryService.search_user_entries_fts(
+            db, user_id=user.id, query=q, limit=limit, offset=offset
+        )
+    else:
+        entries, total = EntryService.filter_entries(
+            db,
+            user_id=user.id,
+            tag=tag,
+            limit=limit,
+            offset=offset
+        )
 
     all_tags = (
         db.query(Entry)
@@ -53,6 +61,7 @@ def rolodex(
         "has_prev": page > 1,
         "has_next": (page * limit) < total,
         "selected_tag": tag,
+        "query": q,
         "all_tags": [t[0] for t in all_tags],
     })
 
@@ -104,7 +113,7 @@ def edit_entry(
     user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    entry = db.query(Entry).get(entry_id)
+    entry = db.get(Entry, entry_id)
     if not entry or (not user.is_admin and entry.user_id != user.id):
         raise HTTPException(status_code=404, detail="Entry not found")
 

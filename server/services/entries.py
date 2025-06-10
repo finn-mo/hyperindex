@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 from typing import Optional, List, Tuple
 
-from sqlalchemy import or_
+from sqlalchemy import or_, text
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy.exc import NoResultFound
 
@@ -193,4 +193,63 @@ class EntryService:
 
         total = q.count()
         entries = q.order_by(Entry.id.desc()).offset(offset).limit(limit).all()
+        return entries, total
+    
+    @staticmethod
+    def search_user_entries_fts(
+        db: Session,
+        user_id: int,
+        query: str,
+        limit: int = 10,
+        offset: int = 0
+    ) -> Tuple[List[Entry], int]:
+        # Step 1: Get matching IDs from subquery
+        sql = text("""
+            SELECT e.id
+            FROM (
+                SELECT rowid
+                FROM entry_fts
+                WHERE entry_fts MATCH :query
+            ) fts
+            JOIN entries e ON e.id = fts.rowid
+            WHERE e.user_id = :user_id AND e.is_deleted = 0
+            ORDER BY e.id DESC
+            LIMIT :limit OFFSET :offset
+        """)
+        id_rows = db.execute(sql, {
+            "user_id": user_id,
+            "query": query,
+            "limit": limit,
+            "offset": offset
+        }).fetchall()
+
+        ids = [row[0] for row in id_rows]
+        if not ids:
+            return [], 0
+
+        # Step 2: Load full entries
+        entries = (
+            db.query(Entry)
+            .filter(Entry.id.in_(ids))
+            .options(joinedload(Entry.tags))
+            .order_by(Entry.id.desc())
+            .all()
+        )
+
+        # Step 3: Count total
+        count_sql = text("""
+            SELECT COUNT(*)
+            FROM (
+                SELECT rowid
+                FROM entry_fts
+                WHERE entry_fts MATCH :query
+            ) fts
+            JOIN entries e ON e.id = fts.rowid
+            WHERE e.user_id = :user_id AND e.is_deleted = 0
+        """)
+        total = db.execute(count_sql, {
+            "user_id": user_id,
+            "query": query
+        }).scalar()
+
         return entries, total
