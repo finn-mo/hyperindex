@@ -1,38 +1,38 @@
 /* Background theme */
-body {
+.theme-rolodex {
   background-color: #f6f1e7;
 }
 
 /* Headings */
-h1,
-h2,
-h3 {
+.theme-rolodex h1,
+.theme-rolodex h2,
+.theme-rolodex h3 {
   color: #3a2f1f;
 }
 
 /* Button theme */
-button,
-.clear-btn,
-.button {
+.theme-rolodex button,
+.theme-rolodex .clear-btn,
+.theme-rolodex .button {
   border: 1px solid #bfa76f;
   background-color: #f9eed1;
   color: #000;
 }
 
-button:hover,
-.clear-btn:hover,
-.button:hover {
+.theme-rolodex button:hover,
+.theme-rolodex .clear-btn:hover,
+.theme-rolodex .button:hover {
   background-color: #e6d8a9;
 }
 
 /* Card appearance */
-.card {
+.theme-rolodex .card {
   background: repeating-linear-gradient(to bottom, #fdfaf5, #fdfaf5 22px, #f0e9dd 23px);
   border: 1px solid #bfa76f;
 }
 
 /* Rolodex-style label badge for cards */
-.card::before {
+.theme-rolodex .card::before {
   content: attr(data-label);
   position: absolute;
   top: -1.25rem;
@@ -48,47 +48,47 @@ button:hover,
   z-index: 1;
 }
 
-.card a {
+.theme-rolodex .card a {
   color: #2a1f0f;
   text-decoration: none;
 }
 
-.card a:hover {
+.theme-rolodex .card a:hover {
   text-decoration: underline;
 }
 
 /* Tag styling */
-.tags span {
+.theme-rolodex .tags span {
   background: #e4dcc4;
   border: 1px solid #aaa;
   font-weight: normal;
 }
 
-.tags span:hover {
+.theme-rolodex .tags span:hover {
   background-color: #e6e3dc;
 }
 
-.tags span a {
+.theme-rolodex .tags span a {
   color: #2a1f0f;
   text-decoration: none;
 }
 
 /* Pagination theme */
-.page-link,
-.pagination strong {
+.theme-rolodex .page-link,
+.theme-rolodex .pagination strong {
   background-color: #fdfaf5;
   border: 1px solid #bfa76f;
   color: #333;
 }
 
-.page-link:hover,
-.pagination strong {
+.theme-rolodex .page-link:hover,
+.theme-rolodex .pagination strong {
   background-color: #e6d8a9;
 }
 
 /* Focus state */
-input:focus,
-textarea:focus {
+.theme-rolodex input:focus,
+.theme-rolodex textarea:focus {
   outline: 2px solid #cfa654;
   background-color: #fffbe6;
 }

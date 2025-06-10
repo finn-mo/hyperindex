@@ -2,8 +2,17 @@
 
 {% block title %}Register - Hyperindex{% endblock %}
 
+{% block extra_css %}
+  <link rel="stylesheet" href="{{ url_for('static', path='yellowpages.css') }}">
+{% endblock %}
+
+{% block body_class %}theme-yellowpages{% endblock %}
+
 {% block content %}
   <h1>Register</h1>
+  {% if error %}
+    <p role="alert" class="error-message">{{ error }}</p>
+  {% endif %}
 
   <form method="POST" action="/register" aria-label="User registration form">
     <label for="username">Username:</label>
@@ -24,6 +33,6 @@
       autocomplete="new-password"
     >
 
-    <button type="submit">Register</button>
+    <button type="submit" aria-label="Submit registration form">Register</button>
   </form>
 {% endblock %}

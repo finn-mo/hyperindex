@@ -2,7 +2,14 @@
 
 {% block title %}Error - Hyperindex{% endblock %}
 
+{% block extra_css %}
+  <link rel="stylesheet" href="{{ url_for('static', path='yellowpages.css') }}">
+{% endblock %}
+
+{% block body_class %}theme-yellowpages{% endblock %}
+
 {% block content %}
   <h1>Error {{ status_code }}</h1>
-  <p>{{ detail }}</p>
+  <p role="alert">{{ detail }}</p>
+  <p><a href="/">← Return to homepage</a></p>
 {% endblock %}

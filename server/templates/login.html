@@ -2,8 +2,17 @@
 
 {% block title %}Login - Hyperindex{% endblock %}
 
+{% block extra_css %}
+  <link rel="stylesheet" href="{{ url_for('static', path='yellowpages.css') }}">
+{% endblock %}
+
+{% block body_class %}theme-yellowpages{% endblock %}
+
 {% block content %}
   <h1>Login</h1>
+  {% if error %}
+    <p role="alert" class="error-message">{{ error }}</p>
+  {% endif %}
 
   <form method="POST" action="/login" aria-label="Login form">
     <label for="username">Username:</label>
@@ -26,6 +35,6 @@
 
     <input type="hidden" name="next" value="{{ request.query_params.get('next', '/') }}">
 
-    <button type="submit">Login</button>
+    <button type="submit" aria-label="Submit login form">Login</button>
   </form>
 {% endblock %}
