@@ -1,16 +1,26 @@
 <nav class="top-nav" aria-label="Main navigation">
-  <ul class="nav-list">
-    <li><a href="/">Yellow Pages</a></li>
-    
-    {% if user %}
-      <li><a href="/rolodex">Rolodex</a></li>
-      {% if user.is_admin %}
-        <li><a href="/admin">Admin Panel</a></li>
+    <ul class="nav-list nav-left">
+      <li>
+        <a href="/" class="{% if request.url.path == '/' %}active{% endif %}">Yellow Pages</a>
+      </li>
+      {% if user %}
+        <li>
+          <a href="/rolodex" class="{% if request.url.path.startswith('/rolodex') %}active{% endif %}">Rolodex</a>
+        </li>
+        {% if user.is_admin %}
+          <li>
+            <a href="/admin" class="{% if request.url.path.startswith('/admin') %}active{% endif %}">Admin Panel</a>
+          </li>
+        {% endif %}
       {% endif %}
-      <li><a href="/logout">Logout</a></li>
-    {% else %}
-      <li><a href="/login">Login</a></li>
-      <li><a href="/register">Register</a></li>
-    {% endif %}
-  </ul>
+    </ul>
+
+    <ul class="nav-list nav-right">
+      {% if user %}
+        <li><a href="/logout">Logout</a></li>
+      {% else %}
+        <li><a href="/login" class="{% if request.url.path.startswith('/login') %}active{% endif %}">Login</a></li>
+        <li><a href="/register" class="{% if request.url.path.startswith('/register') %}active{% endif %}">Register</a></li>
+      {% endif %}
+    </ul>
 </nav>

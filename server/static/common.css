@@ -92,7 +92,6 @@ button,
   font-family: inherit;
   font-size: 0.85rem;
   padding: 4px 10px;
-  border-radius: 3px;
   cursor: pointer;
   font-weight: bold;
   box-shadow: none;
@@ -103,6 +102,64 @@ button:disabled,
 .clear-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+/* Navbar */
+.top-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f2f2f2;
+  border-bottom: 1px solid #bbb;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.nav-left {
+  justify-content: flex-start;
+}
+
+.nav-right {
+  justify-content: flex-end;
+}
+
+.nav-list ul {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+  list-style: none;
+  margin: 0;
+  padding: 0.5rem 1rem;
+}
+
+.nav-list li {
+  display: inline;
+}
+
+.nav-list a {
+  display: inline-block;
+  padding: 6px 10px;
+  color: #2f2f2f;
+  font-weight: bold;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.nav-list a:hover,
+.nav-list a:focus {
+  background-color: #e7e7e7;
+  border: 1px solid #999;
+  padding: 5px 9px; /* 1px less to account for added border */
+  text-decoration: none;
+  outline: none;
+}
+
+.nav-list a.active {
+  background-color: #e3e3e3;
+  border: 1px solid #999;
+  padding: 5px 9px; /* match hover offset */
+  color: #000;
 }
 
 /* Layout container */
