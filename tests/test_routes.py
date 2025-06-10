@@ -13,6 +13,7 @@ def test_rolodex_requires_login(client):
 
 def test_rolodex_authenticated_access(client, access_token):
     """Ensure authenticated users can access their personal rolodex."""
-    response = client.get("/rolodex", cookies={"access_token": access_token})
+    client.cookies.set("access_token", access_token)
+    response = client.get("/rolodex")
     assert response.status_code == 200
     assert "text/html" in response.headers["content-type"]
