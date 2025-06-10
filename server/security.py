@@ -16,14 +16,49 @@ ALGORITHM = settings.ALGORITHM
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
+    """
+    Compare a plaintext password with a hashed password.
+
+    Args:
+        plain_password (str): The plaintext password to verify.
+        hashed_password (str): The hashed password to compare against.
+
+    Returns:
+        bool: True if the password matches, False otherwise.
+    """
+
     return pwd_context.verify(plain_password, hashed_password)
 
 
 def create_token(data: dict[str, str]) -> str:
+    """
+    Generate a JWT token from user-related data.
+
+    Args:
+        data (dict[str, str]): Dictionary containing JWT payload fields (e.g., {"sub": username}).
+
+    Returns:
+        str: Encoded JWT token string.
+    """
+
     return jwt.encode(data, SECRET_KEY, algorithm=ALGORITHM)
 
 
 def get_current_user(request: Request, db: Session = Depends(get_db)) -> User:
+    """
+    Retrieve the authenticated user from the request cookie's JWT token.
+
+    Args:
+        request (Request): FastAPI request object to extract the cookie from.
+        db (Session): SQLAlchemy session for user lookup.
+
+    Returns:
+        User: Authenticated user object.
+
+    Raises:
+        HTTPException: If token is missing, invalid, or user not found.
+    """
+
     token = request.cookies.get("access_token")
     if not token:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Missing token")
@@ -44,6 +79,17 @@ def get_current_user(request: Request, db: Session = Depends(get_db)) -> User:
 
 
 def get_optional_user(access_token: Optional[str], db: Session) -> Optional[User]:
+    """
+    Attempt to retrieve a user from a raw access token, if provided.
+
+    Args:
+        access_token (Optional[str]): JWT token string (can be None).
+        db (Session): SQLAlchemy session for user lookup.
+
+    Returns:
+        Optional[User]: User object if token is valid and user exists, else None.
+    """
+
     if not access_token:
         return None
     try:
