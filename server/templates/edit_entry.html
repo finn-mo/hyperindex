@@ -1,35 +1,27 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Edit Entry - Hyperindex</title>
-  <link rel="stylesheet" href="/static/rolodex.css">
-</head>
-<body>
-  <div class="container">
-    <h1>Edit Entry</h1>
+{% extends "base.html" %}
 
-    <main role="main">
-      <form method="post" aria-label="Edit bookmark entry form">
-        <label for="url">URL:</label>
-        <input type="url" name="url" id="url" value="{{ entry.url }}" required>
+{% block title %}Admin Panel - Hyperindex{% endblock %}
 
-        <label for="title">Title:</label>
-        <input type="text" name="title" id="title" value="{{ entry.title }}" required>
+{% block content %}
+  <h1>Edit Entry</h1>
 
-        <label for="tags">Tags (comma-separated):</label>
-        <input type="text" name="tags" id="tags" value="{{ entry.tags | map(attribute='name') | join(', ') }}">
+  <form method="post" aria-label="Edit bookmark entry form">
+    <label for="url">URL:</label>
+    <input type="url" name="url" id="url" value="{{ entry.url }}" required>
 
-        <label for="notes">Notes:</label>
-        <textarea name="notes" id="notes" rows="4">{{ entry.notes }}</textarea>
+    <label for="title">Title:</label>
+    <input type="text" name="title" id="title" value="{{ entry.title }}" required>
 
-        <button type="submit">Save Changes</button>
-      </form>
+    <label for="tags">Tags (comma-separated):</label>
+    <input type="text" name="tags" id="tags" value="{{ entry.tags | map(attribute='name') | join(', ') }}">
 
-      <p>
-        <a href="/rolodex" aria-label="Return to your personal rolodex page">← Back to Rolodex</a>
-      </p>
-    </main>
-  </div>
-</body>
-</html>
+    <label for="notes">Notes:</label>
+    <textarea name="notes" id="notes" rows="4">{{ entry.notes }}</textarea>
+
+    <button type="submit">Save Changes</button>
+  </form>
+
+  <p>
+    <a href="/rolodex" aria-label="Return to your personal rolodex page">← Back to Rolodex</a>
+  </p>
+{% endblock %}

@@ -1,19 +1,24 @@
-<article class="card" data-label="{{ 'Entry ' ~ card_index if card_index is defined }}">
-  <h2><a href="{{ entry.url }}" target="_blank" rel="noopener">{{ entry.title | e }}</a></h2>
+{% set tag_prefix = tag_prefix if tag_prefix is defined else '/?tag=' %}
+{% set label = 'Entry ' ~ card_index if card_index is defined else '' %}
 
+<article class="card" data-label="{{ label }}">
+  <h2>
+    <a href="{{ entry.url }}" target="_blank" rel="noopener">{{ entry.title | e }}</a>
+  </h2>
 
   {% if entry.tags %}
     <div class="tags">
-      {% set tag_prefix = tag_prefix if tag_prefix is defined else '/?tag=' %}
       {% for tag in entry.tags %}
         <span><a href="{{ tag_prefix }}{{ tag.name }}">{{ tag.name }}</a></span>
       {% endfor %}
     </div>
   {% endif %}
 
-  {% if entry.notes %}
-    <div class="desc">{{ entry.notes | e }}</div>
-  {% endif %}
+  <div class="desc">
+    {% if entry.notes %}
+      {{ entry.notes | e }}
+    {% endif %}
+  </div>
 
   {% if show_actions %}
     {% include "partials/entry_user_actions.html" with context %}

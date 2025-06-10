@@ -2,42 +2,59 @@
 
 {% block title %}Yellow Pages - Hyperindex{% endblock %}
 
-{% block extra_head %}
-<link rel="stylesheet" href="/static/yellowpages.css">
+{% block extra_css %}
+  <link rel="stylesheet" href="{{ url_for('static', path='yellowpages.css') }}">
 {% endblock %}
 
 {% block content %}
   <h1>Hyperindex Yellowpages</h1>
 
-  <section>
-    <h2 class="sr-only">Search Entries</h2>
+  <section aria-labelledby="search-entries">
+    <h2 id="search-entries" class="sr-only">Search Entries</h2>
     <form method="get" action="/" role="search">
       <label for="q" class="sr-only">Search</label>
-      <input id="q" type="text" name="q" value="{{ query or '' }}" placeholder="Search entries...">
+      <input
+        id="q"
+        type="text"
+        name="q"
+        value="{{ query or '' }}"
+        placeholder="Search entries..."
+        autocomplete="off"
+      >
       <button type="submit">Search</button>
       {% if query %}
-      <a href="/" class="clear-btn">Clear</a>
+        <a href="/" class="clear-btn">Clear</a>
       {% endif %}
     </form>
   </section>
 
   {% if tag %}
-  <p>Filtering by tag: <strong>{{ tag }}</strong> —
-    <a href="/">Clear Filter</a>
-  </p>
+    <p>Filtering by tag: <strong>{{ tag }}</strong> —
+      <a href="/">Clear Filter</a>
+    </p>
   {% endif %}
 
   {% if query %}
-  <p><strong>{{ entries|length }}</strong> results for <em>"{{ query }}"</em> (page {{ page }} of {{ total_pages }})</p>
+    <p><strong>{{ entries|length }}</strong> results for <em>"{{ query }}"</em>
+      (page {{ page }} of {{ total_pages }})</p>
   {% else %}
-  <p>Showing <strong>{{ entries|length }}</strong> of <strong>{{ total }}</strong> entries (page {{ page }} of {{ total_pages }})</p>
+    <p>Showing <strong>{{ entries|length }}</strong> of <strong>{{ total }}</strong> entries
+      (page {{ page }} of {{ total_pages }})</p>
   {% endif %}
 
-  {% for entry in entries %}
-    {% include "partials/entry_card.html" with context %}
+  {% if entries %}
+    {% for entry in entries %}
+      {% set card_index = loop.index %}
+      {% set tag_prefix = '/?tag=' %}
+      {% set show_actions = False %}
+      {% include "partials/entry_card.html" %}
+    {% endfor %}
   {% else %}
-    <p>No entries found.</p>
-  {% endfor %}
+    <div class="empty-state" role="note">
+      <p>No entries found.</p>
+      <p>Try a different search or clear filters.</p>
+    </div>
+  {% endif %}
 
   {% include "partials/pagination.html" with context %}
 {% endblock %}

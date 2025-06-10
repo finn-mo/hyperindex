@@ -1,100 +1,22 @@
-/* Reset */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-/* Base layout */
-body, .container {
+/* Background theme */
+body {
   background-color: #f6f1e7;
-  font-family: "Arial Narrow", Arial, sans-serif;
-  font-size: 0.85rem;
-  line-height: 1.2;
-  color: #000;
-  max-width: 900px;
-  margin: auto;
-  padding: 1rem;
 }
 
-/* Typography */
-h1, h2, h3 {
-  color: #3a2f1f;
-  font-family: inherit;
-  font-weight: bold;
-}
-
-h1 {
-  font-size: 1.4rem;
-  margin-bottom: 1rem;
-  border-bottom: 1px solid #bbb;
-  padding-bottom: 0.25rem;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-h2 {
-  font-size: 1.1rem;
-  margin: 1rem 0 0.5rem;
-}
-
+/* Headings */
+h1,
+h2,
 h3 {
-  font-size: 0.95rem;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 0.3rem;
+  color: #3a2f1f;
 }
 
-p {
-  font-size: 0.85rem;
-  margin-bottom: 0.5rem;
-}
-
-hr {
-  border: none;
-  border-top: 1px solid #ccc;
-  margin: 0.5rem 0;
-}
-
-/* Form elements */
-label {
-  font-weight: bold;
-  margin-right: 0.5rem;
-}
-
-input,
-textarea {
-  font-family: inherit;
-  font-size: 0.85rem;
-  padding: 4px 6px;
-  border: 1px solid #666;
-  background: #fff;
-  width: 100%;
-  box-sizing: border-box;
-  resize: vertical;
-}
-
-form {
-  margin-top: 0.5rem;
-  background: none;
-  border: none;
-  padding: 0;
-}
-
-/* Button styles */
+/* Button theme */
 button,
 .clear-btn,
 .button {
-  font-family: inherit;
-  font-size: 0.85rem;
-  padding: 4px 10px;
-  border-radius: 3px;
-  cursor: pointer;
-  font-weight: bold;
   border: 1px solid #bfa76f;
   background-color: #f9eed1;
   color: #000;
-  box-shadow: none;
 }
 
 button:hover,
@@ -103,55 +25,31 @@ button:hover,
   background-color: #e6d8a9;
 }
 
-button:disabled,
-.clear-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-/* Card layout */
+/* Card appearance */
 .card {
   background: repeating-linear-gradient(to bottom, #fdfaf5, #fdfaf5 22px, #f0e9dd 23px);
   border: 1px solid #bfa76f;
-  border-left: 6px solid #cfa654;
-  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
-  margin: 1.5rem 0;
-  padding: 1rem;
-  position: relative;
-  border-radius: 6px;
 }
 
+/* Rolodex-style label badge for cards */
 .card::before {
   content: attr(data-label);
   position: absolute;
   top: -1.25rem;
-  left: 1rem;
-  background: #d6b370;
+  right: 1rem;
   padding: 2px 6px;
+  background: #d6b370;
+  color: #3a2f1f;
   font-family: "Lucida Sans Typewriter", "Lucida Console", "Courier", monospace;
   font-size: 0.75rem;
   font-weight: bold;
-  color: #3a2f1f;
   border-radius: 3px 3px 0 0;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
   z-index: 1;
 }
 
-.card form {
-  margin-bottom: 0.5rem;
-}
-
-.card .actions {
-  margin-top: 0.5rem;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-/* Links */
 .card a {
   color: #2a1f0f;
-  font-weight: bold;
   text-decoration: none;
 }
 
@@ -159,21 +57,11 @@ button:disabled,
   text-decoration: underline;
 }
 
-/* Tags */
-.tags {
-  margin-top: 0.4rem;
-  font-size: 0.75rem;
-  color: #000;
-}
-
+/* Tag styling */
 .tags span {
   background: #e4dcc4;
   border: 1px solid #aaa;
   font-weight: normal;
-  padding: 2px 6px;
-  margin: 2px;
-  display: inline-block;
-  font-size: 0.75rem;
 }
 
 .tags span:hover {
@@ -183,25 +71,14 @@ button:disabled,
 .tags span a {
   color: #2a1f0f;
   text-decoration: none;
-  font-weight: bold;
 }
 
-/* Pagination */
-.pagination {
-  background: none;
-  padding: 0.5rem 0;
-  text-align: center;
-}
-
+/* Pagination theme */
 .page-link,
 .pagination strong {
   background-color: #fdfaf5;
   border: 1px solid #bfa76f;
   color: #333;
-  margin: 0 4px;
-  padding: 4px 8px;
-  font-weight: bold;
-  text-decoration: none;
 }
 
 .page-link:hover,
@@ -209,57 +86,9 @@ button:disabled,
   background-color: #e6d8a9;
 }
 
-.page-ellipsis {
-  margin: 0 6px;
-  color: #666;
-  font-weight: bold;
-}
-
-/* Accessibility */
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
-
+/* Focus state */
 input:focus,
 textarea:focus {
   outline: 2px solid #cfa654;
   background-color: #fffbe6;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  body, .container {
-    padding: 0.5rem;
-  }
-
-  .card {
-    padding: 0.75rem;
-    margin: 1rem 0;
-  }
-
-  .card .actions {
-    flex-direction: column;
-    gap: 0.25rem;
-  }
-
-  .tags span {
-    font-size: 0.7rem;
-    padding: 2px 4px;
-  }
-
-  h1 { font-size: 1.2rem; }
-  h2 { font-size: 1rem; }
-  h3 { font-size: 0.9rem; }
-
-  input, textarea {
-    font-size: 0.8rem;
-  }
 }

@@ -1,56 +1,21 @@
-/* Reset */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-/* Layout */
-body,
-.container {
+/* Theme background */
+body {
   background-color: #fff68f;
-  font-family: "Arial Narrow", Arial, sans-serif;
-  font-size: 0.85rem;
-  line-height: 1.2;
-  color: #000;
-  max-width: 900px;
-  margin: auto;
-  padding: 1rem;
 }
 
-/* Typography */
+/* Headings */
 h1 {
-  font-size: 1.4rem;
-  margin-bottom: 1rem;
   color: #004080;
   border-bottom: 1px solid #888;
-  padding-bottom: 0.25rem;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
 }
 
 h2,
 h3 {
-  font-size: 1rem;
-  margin-bottom: 0.25rem;
-  font-weight: bold;
-  text-transform: uppercase;
   color: #b30000;
 }
 
-p {
-  font-size: 0.85rem;
-}
-
-hr {
-  border: none;
-  border-top: 1px solid #ccc;
-  margin: 0.5rem 0;
-}
-
-/* Forms */
+/* Form theme */
 form {
-  margin-bottom: 1rem;
   background: #fff8c6;
   padding: 0.5rem;
   border: 1px solid #aaa;
@@ -60,15 +25,7 @@ form {
   align-items: center;
 }
 
-input,
-textarea {
-  font-family: inherit;
-  padding: 4px 6px;
-  font-size: 0.85rem;
-  border: 1px solid #666;
-  background: #fff;
-}
-
+/* Input theme */
 input[type="text"],
 input[type="password"],
 input[type="email"] {
@@ -76,27 +33,12 @@ input[type="email"] {
   min-width: 200px;
 }
 
-textarea {
-  width: 100%;
-  resize: vertical;
-  box-sizing: border-box;
-}
-
-label {
-  font-weight: bold;
-  margin-right: 0.5rem;
-}
-
-/* Buttons */
+/* Button theme */
 button,
 .clear-btn {
-  font-family: inherit;
-  font-size: 0.85rem;
-  padding: 4px 10px;
   border: 1px solid #888;
   background-color: #ffe066;
   color: #000;
-  cursor: pointer;
 }
 
 button:hover,
@@ -104,88 +46,51 @@ button:hover,
   background-color: #ffd700;
 }
 
-button:disabled {
-  background-color: #ddd;
-  color: #666;
-  border-color: #aaa;
-  cursor: not-allowed;
-}
-
-.clear-btn {
-  margin-left: 1em;
-  border-radius: 3px;
-  text-decoration: none;
-}
-
-/* Card styling */
+/* Card appearance */
 .card {
-  border-left: 6px solid #f0c000;
   background: #fff8dc;
   border: 1px solid #999;
-  padding: 0.5rem;
-  margin: 0.25rem 0;
 }
 
 .card a {
   color: #383838;
   font-weight: bold;
-  text-decoration: none;
 }
 
 .card a:hover {
   text-decoration: underline;
 }
 
-/* Tag styling */
-.tags {
-  margin-top: 0.4rem;
-  font-size: 0.75rem;
-  color: #000;
-}
-
+/* Tag badges */
 .tags span {
   background: #fff2a8;
   border: 1px solid #bbb;
-  font-size: 0.75rem;
-  padding: 2px 6px;
-  margin: 2px;
   font-weight: bold;
-  display: inline-block;
 }
 
 .tags span:hover {
-  background: #ffe44e;
+  background-color: #ffe44e;
 }
 
 .tags span a {
-  text-decoration: none;
   color: #333;
+  text-decoration: none;
   font-weight: bold;
 }
 
-/* Description */
+/* Entry description */
 .desc {
   margin-top: 0.4rem;
   font-size: 0.85rem;
   line-height: 1.3;
 }
 
-/* Pagination */
-.pagination {
-  margin: 1rem 0;
-  text-align: center;
-}
-
+/* Pagination theme */
 .page-link,
 .pagination strong {
-  display: inline-block;
-  margin: 0 4px;
-  padding: 4px 8px;
-  border: 1px solid #999;
   background-color: #fff8c6;
+  border: 1px solid #999;
   color: #000;
-  text-decoration: none;
-  font-weight: bold;
 }
 
 .page-link:hover {
@@ -197,72 +102,9 @@ button:disabled {
   border-color: #888;
 }
 
-.page-ellipsis {
-  margin: 0 6px;
-  color: #666;
-  font-weight: bold;
-}
-
-/* Badge */
-.badge {
-  background-color: #ffec99;
-  color: #333;
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-size: 0.8em;
-  margin-left: 8px;
-  font-weight: bold;
-  border: 1px solid #bbb;
-}
-
-/* Accessibility */
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
-
+/* Focus override */
 input:focus,
 textarea:focus {
   outline: 2px solid #f0c000;
   background-color: #fffef0;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  body,
-  .container {
-    padding: 0.5rem;
-  }
-
-  form {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  input,
-  textarea {
-    font-size: 0.8rem;
-    min-width: 100%;
-  }
-
-  h1 {
-    font-size: 1.2rem;
-  }
-
-  .card {
-    padding: 0.5rem;
-    margin: 0.75rem 0;
-  }
-
-  .tags span {
-    font-size: 0.7rem;
-    padding: 2px 4px;
-  }
 }

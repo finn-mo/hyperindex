@@ -1,6 +1,7 @@
 <nav class="top-nav" aria-label="Main navigation">
-  <ul>
+  <ul class="nav-list">
     <li><a href="/">Yellow Pages</a></li>
+    
     {% if user %}
       <li><a href="/rolodex">Rolodex</a></li>
       {% if user.is_admin %}

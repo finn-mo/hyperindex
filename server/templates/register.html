@@ -1,23 +1,29 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Register - Hyperindex</title>
-  <link rel="stylesheet" href="/static/yellowpages.css">
-</head>
-<body>
-  <main class="container">
-    <h1>Register</h1>
+{% extends "base.html" %}
 
-    <form method="POST" action="/register" aria-label="User registration form">
-      <label for="username">Username:</label>
-      <input type="text" id="username" name="username" required autocomplete="username">
+{% block title %}Register - Hyperindex{% endblock %}
 
-      <label for="password">Password:</label>
-      <input type="password" id="password" name="password" required autocomplete="new-password">
+{% block content %}
+  <h1>Register</h1>
 
-      <button type="submit">Register</button>
-    </form>
-  </main>
-</body>
-</html>
+  <form method="POST" action="/register" aria-label="User registration form">
+    <label for="username">Username:</label>
+    <input
+      type="text"
+      id="username"
+      name="username"
+      required
+      autocomplete="username"
+    >
+
+    <label for="password">Password:</label>
+    <input
+      type="password"
+      id="password"
+      name="password"
+      required
+      autocomplete="new-password"
+    >
+
+    <button type="submit">Register</button>
+  </form>
+{% endblock %}

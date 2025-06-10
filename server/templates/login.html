@@ -1,25 +1,31 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Login - Hyperindex</title>
-  <link rel="stylesheet" href="/static/yellowpages.css">
-</head>
-<body>
-  <main class="container" role="main">
-    <h1>Login</h1>
+{% extends "base.html" %}
 
-    <form method="POST" action="/login" aria-label="Login form">
-      <label for="username">Username:</label>
-      <input type="text" id="username" name="username" required autocomplete="username">
+{% block title %}Login - Hyperindex{% endblock %}
 
-      <label for="password">Password:</label>
-      <input type="password" id="password" name="password" required autocomplete="current-password">
+{% block content %}
+  <h1>Login</h1>
 
-      <input type="hidden" name="next" value="{{ request.query_params.get('next', '/') }}">
+  <form method="POST" action="/login" aria-label="Login form">
+    <label for="username">Username:</label>
+    <input
+      type="text"
+      id="username"
+      name="username"
+      required
+      autocomplete="username"
+    >
 
-      <button type="submit">Login</button>
-    </form>
-  </main>
-</body>
-</html>
+    <label for="password">Password:</label>
+    <input
+      type="password"
+      id="password"
+      name="password"
+      required
+      autocomplete="current-password"
+    >
+
+    <input type="hidden" name="next" value="{{ request.query_params.get('next', '/') }}">
+
+    <button type="submit">Login</button>
+  </form>
+{% endblock %}
