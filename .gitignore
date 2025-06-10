@@ -10,6 +10,7 @@ __pycache__/
 # Editor/IDE
 .vscode/
 *.swp
+*~
 
 # macOS
 .DS_Store
@@ -36,3 +37,6 @@ build/
 
 # Server database
 *.db
+
+# Developer scripts
+scripts/
