@@ -8,15 +8,20 @@
 - Entry submission and admin approval system
 - Role-based permissions for entry submission and moderation
 - Admin-managed Yellow Pages entries are forked copies of user submissions
-- Tag-aware search: supports combined filters and linked tag navigation
+- Tag-aware search with multi-tag filters and clickable tag navigation
 - Accessibility improvements (ARIA roles, `:focus` states, screen reader support)
+- JWT-based login/logout system with secure session cookies
 
 ### Changed
 - Public homepage now shows only admin-approved entries
-- Split visual styles: `yellowpages.css` for public, `rolodex.css` for dashboard
+- Split visual styles: `yellowpages.css` (public), `rolodex.css` (dashboard)
 - Major backend refactor:
-  - Separated route logic into `views/`, business logic into `services/`, and shared helpers into `utils/`
-- Removed CLI interface and related references
+  - Route logic moved to `views/`, business logic to `services/`, and shared helpers to `utils/`
+- Rebuilt testing suite for new web-first architecture:
+  - Includes service tests, fixtures, JWT auth handling, and 70%+ coverage via `pytest-cov`
+
+### Removed
+- Legacy CLI (`client/`) interface and all related archiving logic
 
 ## [2.0.0] - 2025-06-04
 ### Added

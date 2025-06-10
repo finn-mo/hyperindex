@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Table
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Table, DateTime, func
 from sqlalchemy.orm import relationship
 from server.db.connection import Base
 
@@ -11,6 +11,7 @@ entry_tags = Table(
 
 class User(Base):
     __tablename__ = 'users'
+
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String, unique=True, index=True)
     password_hash = Column(String)
@@ -20,22 +21,33 @@ class User(Base):
 
 class Tag(Base):
     __tablename__ = 'tags'
+
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, unique=True)
+
     entries = relationship("Entry", secondary=entry_tags, back_populates="tags")
 
 class Entry(Base):
     __tablename__ = 'entries'
+
+    # Core content
     id = Column(Integer, primary_key=True, index=True)
     url = Column(String)
     title = Column(String)
     notes = Column(String)
+
+    # Metadata
+    date_added = Column(DateTime(timezone=True), server_default=func.now())
     is_deleted = Column(Boolean, default=False)
     is_public_copy = Column(Boolean, default=False)
     submitted_to_public = Column(Boolean, default=False)
-    original_id = Column(Integer, ForeignKey("entries.id"), nullable=True)
-    original = relationship("Entry", remote_side="Entry.id", backref="admin_forks")
 
+    # Relationships
     user_id = Column(Integer, ForeignKey("users.id"))
     owner = relationship("User", back_populates="entries")
+
     tags = relationship("Tag", secondary=entry_tags, back_populates="entries")
+
+    # Forking logic
+    original_id = Column(Integer, ForeignKey("entries.id"), nullable=True)
+    original = relationship("Entry", remote_side="Entry.id", backref="admin_forks")

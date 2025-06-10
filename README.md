@@ -1,6 +1,6 @@
 # Hyperindex – Internet Rolodex and Yellow Pages
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Python Version](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/)
+[![Python Version](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/)
 [![Last Commit](https://img.shields.io/github/last-commit/finn-mo/hyperindex?cacheSeconds=3600)](https://github.com/finn-mo/hyperindex/commits/main)  
 Hyperindex is a lightweight web app for curating and sharing independent websites. Inspired by the early internet, it lets users build a personal Rolodex and explore a shared Yellow Pages of user-submitted sites. Designed for the indie web and independent browsing. Built with FastAPI, Jinja2, and SQLite.
 
@@ -26,8 +26,8 @@ Hyperindex is a lightweight web app for curating and sharing independent website
 ```bash
 git clone https://github.com/finn-mo/hyperindex.git
 cd hyperindex
-python -m venv venv
-source venv/bin/activate  # On Windows: .\venv\Scripts\activate
+python -m venv venv                     # Requires Python 3.12+
+source venv/bin/activate                # On Windows: .\venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
@@ -40,47 +40,47 @@ pip-compile
 ## Usage
 Start the server:
 ```bash
-uvicorn server.main:app --reload
+uvicorn server.api.main:app --reload   # Entry point: FastAPI app
 ```
 Once running, visit `http://localhost:8000/` in your browser to access the web interface.
 
 ## File Structure
 ```
 server/
-├── api/                  # API entrypoint and future programmatic interface
-│   ├── main.py
-├── views/                # HTML-facing routes
-│   ├── admin.py
-│   ├── auth.py
-│   ├── rolodex.py
-│   └── yellowpages.py
-├── templates/            # Jinja2 templates (includes base layout, partials)
-├── static/               # CSS (rolodex.css, yellowpages.css)
-├── models/               # SQLAlchemy and Pydantic models
-│   ├── entities.py
-│   └── schemas.py
-├── services/             # All business logic
-│   └── entries.py
-├── utils/                # Utility functions
-│   └── tags.py
-├── db/                   # Database connection
-│   └── connection.py
-└── security.py           # Central auth/token logic
+├── api/            # API entrypoint (main FastAPI app)
+├── views/          # Web routes (auth, rolodex, yellowpages, admin)
+├── templates/      # Jinja2 templates for HTML rendering
+├── static/         # CSS and other frontend assets
+├── models/         # SQLAlchemy + Pydantic models (entities, schemas)
+├── services/       # Business logic (e.g., EntryService)
+├── utils/          # Shared helpers (e.g., tag parsing)
+├── db/             # Database connection setup
+├── security.py     # Auth + token creation/verification
+└── settings.py     # Environment config (uses pydantic-settings)
 
+tests/
+├── conftest.py     # Pytest fixtures (DB, user, token, client)
+├── test_auth.py    # Login, logout, registration tests
+├── test_entries.py # Entry creation, filtering, tag logic tests
+└── test_routes.py  # Route-level behavior tests (access, redirects)
 ```
 
 ## Testing
-Hyperindex includes a [pytest](https://docs.pytest.org/) suite covering server routes.
+Hyperindex includes a [pytest](https://docs.pytest.org/) suite covering server routes. Coverage reporting is handled via `pytest-cov` (automatically configured via `pytest.ini`).
 
 To run tests:
 ```bash
 pytest
 ```
+The suite includes:
+- Fixtures for test database, users, and tokens
+- Authentication flow tests (login, logout, protected access)
+- Full coverage of core services (EntryService, tag filtering, etc.)
+- Enforces a minimum 70% coverage threshold via `pytest.ini`
 
 ## Environment
-- SQLite by default (`hyperindex.db`)
-- Configurable via `HYPERINDEX_SERVER_DB`
-- `.env` supported if using with deployment
+- SQLite by default (`./server/db/hyperindex.db`)
+- `.env` supported for environment overrides (e.g. `DATABASE_URL`, `SECRET_KEY`)
 
 ## Changelog
 See [CHANGELOG.md](CHANGELOG.md) for release notes.

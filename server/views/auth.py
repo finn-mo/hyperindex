@@ -59,7 +59,7 @@ def register_post(
     return {"status": "registered"}
 
 @router.get("/logout")
-def logout(response: Response):
+def logout():
     response = RedirectResponse(url="/", status_code=302)
     response.delete_cookie("access_token")
     return response

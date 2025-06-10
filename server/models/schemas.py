@@ -1,3 +1,4 @@
+from datetime import datetime
 from pydantic import BaseModel, Field
 from typing import List, Optional
 
@@ -22,6 +23,7 @@ class EntryOut(EntryBase):
     id: int
     user_id: int
     is_deleted: bool
+    date_added: datetime
 
     class Config:
         from_attributes = True

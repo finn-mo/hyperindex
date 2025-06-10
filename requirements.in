@@ -1,11 +1,9 @@
-pywebcopy
-waybackpy
-click
 fastapi
 pydantic
 uvicorn
 jinja2
 pytest
+pytest-cov
 sqlalchemy
 python-jose
 passlib
