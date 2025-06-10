@@ -1,5 +1,3 @@
-# server/views/rolodex.py
-
 from fastapi import APIRouter, Request, Depends, Form, HTTPException, Query
 from fastapi.responses import HTMLResponse, RedirectResponse
 from sqlalchemy.orm import Session
@@ -75,7 +73,8 @@ def create_entry_from_form(
 ):
     tag_list = [t.strip() for t in tags.split(",") if t.strip()]
     entry_in = EntryCreate(url=url, title=title, notes=notes, tags=tag_list)
-    return EntryService.create_entry(db, entry_in, user.id), RedirectResponse("/rolodex", status_code=302)
+    EntryService.create_entry(db, entry_in, user.id)
+    return RedirectResponse("/rolodex", status_code=303)
 
 
 @router.get("/entries/{entry_id}/edit", response_class=HTMLResponse)

@@ -9,15 +9,16 @@ from passlib.context import CryptContext
 from server.models.entities import User
 from server.security import create_token, get_db
 
+
 router = APIRouter(tags=["auth"])
-
 templates = Jinja2Templates(directory="server/templates")
-
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
 
 @router.get("/login", response_class=HTMLResponse)
 def login_page(request: Request):
     return templates.TemplateResponse("login.html", {"request": request})
+
 
 @router.post("/login")
 def login_post(
@@ -35,9 +36,11 @@ def login_post(
     resp.set_cookie(key="access_token", value=token, httponly=True)
     return resp
 
+
 @router.get("/register", response_class=HTMLResponse)
 def register_page(request: Request):
     return templates.TemplateResponse("register.html", {"request": request})
+
 
 @router.post("/register")
 def register_post(
@@ -56,7 +59,8 @@ def register_post(
     new_user = User(username=username, password_hash=hashed_password)
     db.add(new_user)
     db.commit()
-    return {"status": "registered"}
+    return RedirectResponse(url="/login", status_code=302)
+
 
 @router.get("/logout")
 def logout():
