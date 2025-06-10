@@ -1,18 +1,41 @@
 {% extends "base.html" %}
 
-{% block title %}Edit Entry - Hyperindex{% endblock %}
+{% block title %}About - Hyperindex{% endblock %}
 
 {% block extra_css %}
-  <link rel="stylesheet" href="{{ url_for('static', path='rolodex.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', path='yellowpages.css') }}">
 {% endblock %}
 
-{% block body_class %}theme-rolodex{% endblock %}
+{% block body_class %}theme-yellowpages{% endblock %}
 
 {% block content %}
-  <h1>About</h1>
-
+  <h1>About Hyperindex</h1>
 
   <p>
-    Hyperindex is a lightweight web app for curating and sharing independent websites. Inspired by the early internet, it lets users build a personal Rolodex and explore a shared Yellow Pages of user-submitted sites. Designed for the indie web and independent browsing.
+    <strong>Hyperindex</strong> is a small project built around a simple idea: keep track of websites you like, and share the ones you think are worth revisiting.
+  </p>
+  
+  <p>
+    The <strong>Yellow Pages</strong> is a shared collection made up of submissions from different users. Entries go through a quick admin review before they're visible to everyone. This keeps things lightweight and avoids spam or broken pages.
+  </p>
+
+  <p>
+    For personal archiving, the site also features a <strong>Rolodex</strong>, where you save links, jot down notes, and tag things in a way that makes sense to you. None of this is public unless you choose to submit an entry.
+  </p>
+
+  <p>
+    There's no feed, no algorithm, and no real pressure to “engage.” Hyperindex doesn't try to replace bookmarks or browsing — it's more like a public notepad for the web. If you remember old directories, zine-style link pages, or early blogs with a sidebar full of links — that's the vibe.
+  </p>
+
+  <p>
+    It's intentionally plain. The goal is to keep it usable and human without much overhead.
+  </p>
+
+  <p>
+    The project is open-source and designed for longevity, transparency, and fun. Whether you're into digital gardening, link rot prevention, or just miss the old internet, Hyperindex is a place to build your own slice of it.
+  </p>
+
+  <p>
+    Questions or feedback? <a href="https://github.com/yourproject/hyperindex" target="_blank" rel="noopener">Visit the GitHub repo</a>.
   </p>
 {% endblock %}

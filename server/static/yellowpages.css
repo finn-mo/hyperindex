@@ -25,14 +25,6 @@
   align-items: center;
 }
 
-/* Input theme */
-.theme-yellowpages input[type="text"],
-.theme-yellowpages input[type="password"],
-.theme-yellowpages input[type="email"] {
-  flex: 1;
-  min-width: 200px;
-}
-
 /* Button theme */
 .theme-yellowpages button,
 .theme-yellowpages .clear-btn {
@@ -42,7 +34,7 @@
 }
 
 .theme-yellowpages button:hover,
-.clear-btn:hover {
+.theme-yellowpages .clear-btn:hover {
   background-color: #ffd700;
 }
 

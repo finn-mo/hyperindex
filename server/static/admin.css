@@ -1,0 +1,92 @@
+/* Admin Theme */
+.theme-admin {
+  background-color: #eef7f9;
+}
+
+/* Headings */
+.theme-admin h1,
+.theme-admin h2,
+.theme-admin h3 {
+  color: #124559;
+}
+
+.theme-admin h1 {
+  border-bottom: 1px solid #88a;
+}
+
+/* Form styling */
+.theme-admin form {
+  background: #e2f1f4;
+  padding: 0.5rem;
+  border: 1px solid #aac;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  align-items: center;
+}
+
+/* Buttons */
+.theme-admin button,
+.theme-admin .clear-btn,
+.theme-admin .button {
+  border: 1px solid #5595a8;
+  background-color: #c6eaf0;
+  color: #000;
+}
+
+.theme-admin button:hover,
+.theme-admin .clear-btn:hover,
+.theme-admin .button:hover {
+  background-color: #b2dbe2;
+}
+
+/* Cards */
+.theme-admin .card {
+  background: #f0fbfd;
+  border: 1px solid #aac;
+}
+
+.theme-admin .card a {
+  color: #0f3f50;
+  font-weight: bold;
+}
+
+.theme-admin .card a:hover {
+  text-decoration: underline;
+}
+
+/* Tags */
+.theme-admin .tags span {
+  background: #d1ecf1;
+  border: 1px solid #aac;
+  font-weight: normal;
+}
+
+.theme-admin .tags span:hover {
+  background-color: #c1e0e7;
+}
+
+.theme-admin .tags span a {
+  color: #124559;
+  text-decoration: none;
+}
+
+/* Pagination */
+.theme-admin .page-link,
+.theme-admin .pagination strong {
+  background-color: #e6f7fa;
+  border: 1px solid #88a;
+  color: #124559;
+}
+
+.theme-admin .page-link:hover,
+.theme-admin .pagination strong {
+  background-color: #c6eaf0;
+}
+
+/* Focus */
+.theme-admin input:focus,
+.theme-admin textarea:focus {
+  outline: 2px solid #5595a8;
+  background-color: #f5ffff;
+}
