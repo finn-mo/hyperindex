@@ -198,56 +198,6 @@ class EntryService:
         db.commit()
     
     @staticmethod
-    def filter_entries(
-        db: Session,
-        user_id: Optional[int] = None,
-        public_only: bool = False,
-        tag: Optional[str] = None,
-        query: Optional[str] = None,
-        limit: int = 10,
-        offset: int = 0
-    ) -> Tuple[List[Entry], int]:
-        """
-        Unified entry search/filter method. Supports user scope, public scope, tag filtering, and text search.
-
-        Args:
-            db (Session): SQLAlchemy session.
-            user_id (Optional[int]): If provided, limits to entries owned by the user.
-            public_only (bool): If True, limits to admin-managed public entries.
-            tag (Optional[str]): If provided, filters entries by tag name.
-            query (Optional[str]): Case-insensitive search across title, notes, and URL.
-            limit (int): Max number of entries to return.
-            offset (int): Number of entries to skip.
-
-        Returns:
-            Tuple[List[Entry], int]: List of entries and total result count.
-        """
-        q = db.query(Entry).options(joinedload(Entry.tags)).filter(Entry.is_deleted == False)
-
-        if user_id is not None:
-            q = q.filter(Entry.user_id == user_id, Entry.is_public_copy == False)
-
-        if public_only:
-            q = q.filter(Entry.is_public_copy == True)
-
-        if tag:
-            q = q.filter(Entry.tags.any(Tag.name == tag))
-
-        if query:
-            pattern = f"%{query}%"
-            q = q.filter(
-                or_(
-                    Entry.title.ilike(pattern),
-                    Entry.notes.ilike(pattern),
-                    Entry.url.ilike(pattern),
-                )
-            )
-
-        total = q.count()
-        entries = q.order_by(Entry.id.desc()).offset(offset).limit(limit).all()
-        return entries, total
-    
-    @staticmethod
     def search_user_entries_fts(
         db: Session,
         user_id: int,

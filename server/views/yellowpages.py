@@ -3,8 +3,10 @@ from fastapi.responses import HTMLResponse
 from sqlalchemy.orm import Session
 from typing import Optional
 
+from server.models.entities import Entry
 from server.security import get_db, get_optional_user
 from server.services.entries import EntryService
+from server.services.filters import EntryFilter
 from fastapi.templating import Jinja2Templates
 
 templates = Jinja2Templates(directory="server/templates")
@@ -22,21 +24,21 @@ def yellowpages(
     db: Session = Depends(get_db)
 ):
     user = get_optional_user(access_token, db)
-
     offset = (page - 1) * limit
+
     if q:
         entries, total = EntryService.search_public_entries_fts(
             db, query=q, limit=limit, offset=offset
         )
     else:
-        entries, total = EntryService.filter_entries(
-            db,
+        entries, total = EntryFilter.get_entries(
+            db=db,
             public_only=True,
-            query=None,
             tag=tag,
-            limit=limit,
-            offset=offset
+            page=page,
+            per_page=limit
         )
+
     total_pages = (total // limit) + (1 if total % limit > 0 else 0)
 
     return templates.TemplateResponse(request, "yellowpages.html", {

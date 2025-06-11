@@ -7,6 +7,7 @@ from server.security import get_current_user, get_db
 from server.models.entities import User, Entry, Tag
 from server.models.schemas import EntryCreate
 from server.services.entries import EntryService
+from server.services.filters import EntryFilter
 from server.utils.tags import resolve_tags
 from fastapi.templating import Jinja2Templates
 
@@ -24,7 +25,6 @@ def rolodex(
     user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-
     offset = (page - 1) * limit
 
     if q:
@@ -32,19 +32,18 @@ def rolodex(
             db, user_id=user.id, query=q, limit=limit, offset=offset
         )
     else:
-        entries, total = EntryService.filter_entries(
-            db,
+        entries, total = EntryFilter.get_entries(
+            db=db,
             user_id=user.id,
             tag=tag,
-            limit=limit,
-            offset=offset
+            page=page,
+            per_page=limit
         )
 
     all_tags = (
-        db.query(Entry)
-        .filter(Entry.user_id == user.id, Entry.is_deleted == False)
+        db.query(Tag.name)
         .join(Entry.tags)
-        .with_entities(Tag.name)
+        .filter(Entry.user_id == user.id, Entry.is_deleted == False)
         .distinct()
         .all()
     )
