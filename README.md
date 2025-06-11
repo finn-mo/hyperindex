@@ -48,7 +48,7 @@ Once running, visit `http://localhost:8000/` in your browser to access the web i
 ```
 server/
 ├── api/            # API entrypoint (main FastAPI app)
-├── views/          # Web routes (auth, rolodex, yellowpages, admin)
+├── views/          # Web routes (auth, rolodex, yellowpages, admin, misc)
 ├── templates/      # Jinja2 templates for HTML rendering
 ├── static/         # CSS and other frontend assets
 ├── models/         # SQLAlchemy + Pydantic models (entities, schemas)

@@ -21,11 +21,13 @@ def admin_panel(
 
     pending_entries = db.query(Entry).filter(
         Entry.submitted_to_public == True,
-        Entry.is_public_copy == False
+        Entry.is_public_copy == False,
+        Entry.is_deleted == False
     ).order_by(Entry.id.desc()).all()
 
     public_entries = db.query(Entry).filter(
-        Entry.is_public_copy == True
+        Entry.is_public_copy == True,
+        Entry.is_deleted == False
     ).order_by(Entry.id.desc()).all()
 
     return templates.TemplateResponse(request, "admin_panel.html", {
@@ -62,10 +64,10 @@ def approve_entry(
         tags=cloned_tags,
     )
     db.add(admin_entry)
-    entry.submitted_to_public = False  # mark original as processed
+    entry.submitted_to_public = False
     db.commit()
 
-    return RedirectResponse(f"/entries/{admin_entry.id}/edit", status_code=302)
+    return RedirectResponse("/admin", status_code=302)
 
 
 @router.post("/admin/reject/{entry_id}")

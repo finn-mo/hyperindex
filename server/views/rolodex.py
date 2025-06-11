@@ -130,9 +130,21 @@ def edit_entry(
 
 
 @router.post("/entries/{entry_id}/delete")
-def delete_entry(entry_id: int, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+def delete_entry(
+    entry_id: int,
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    entry = db.query(Entry).get(entry_id)
+    if not entry or (not user.is_admin and entry.user_id != user.id):
+        raise HTTPException(status_code=404, detail="Entry not found")
+
     EntryService.soft_delete_entry(db, entry_id, user.id)
-    return RedirectResponse("/rolodex", status_code=302)
+
+    return RedirectResponse(
+        "/admin" if entry.is_public_copy else "/rolodex",
+        status_code=302
+    )
 
 
 @router.post("/entries/{entry_id}/submit")
