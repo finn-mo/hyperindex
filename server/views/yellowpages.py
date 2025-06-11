@@ -24,14 +24,19 @@ def yellowpages(
     user = get_optional_user(access_token, db)
 
     offset = (page - 1) * limit
-    entries, total = EntryService.filter_entries(
-        db,
-        public_only=True,
-        query=q,
-        tag=tag,
-        limit=limit,
-        offset=offset
-    )
+    if q:
+        entries, total = EntryService.search_public_entries_fts(
+            db, query=q, limit=limit, offset=offset
+        )
+    else:
+        entries, total = EntryService.filter_entries(
+            db,
+            public_only=True,
+            query=None,
+            tag=tag,
+            limit=limit,
+            offset=offset
+        )
     total_pages = (total // limit) + (1 if total % limit > 0 else 0)
 
     return templates.TemplateResponse(request, "yellowpages.html", {

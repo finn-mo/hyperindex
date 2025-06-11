@@ -253,3 +253,67 @@ class EntryService:
         }).scalar()
 
         return entries, total
+    
+    @staticmethod
+    def search_public_entries_fts(
+        db: Session,
+        query: str,
+        limit: int = 10,
+        offset: int = 0
+    ) -> Tuple[List[Entry], int]:
+        """
+        Perform full-text search across public (admin-managed) entries.
+
+        Args:
+            db (Session): SQLAlchemy session.
+            query (str): Search query string for FTS match.
+            limit (int): Maximum number of entries to return.
+            offset (int): Number of entries to skip (for pagination).
+
+        Returns:
+            Tuple[List[Entry], int]: A tuple containing:
+                - List of matching Entry objects (admin-approved public copies).
+                - Total number of matches for pagination purposes.
+        """
+        sql = text("""
+            SELECT e.id
+            FROM (
+                SELECT rowid
+                FROM entry_fts
+                WHERE entry_fts MATCH :query
+            ) fts
+            JOIN entries e ON e.id = fts.rowid
+            WHERE e.is_public_copy = 1
+            ORDER BY e.id DESC
+            LIMIT :limit OFFSET :offset
+        """)
+        id_rows = db.execute(sql, {
+            "query": query,
+            "limit": limit,
+            "offset": offset
+        }).fetchall()
+
+        ids = [row[0] for row in id_rows]
+        if not ids:
+            return [], 0
+
+        entries = (
+            db.query(Entry)
+            .filter(Entry.id.in_(ids))
+            .order_by(Entry.id.desc())
+            .all()
+        )
+
+        count_sql = text("""
+            SELECT COUNT(*)
+            FROM (
+                SELECT rowid
+                FROM entry_fts
+                WHERE entry_fts MATCH :query
+            ) fts
+            JOIN entries e ON e.id = fts.rowid
+            WHERE e.is_public_copy = 1
+        """)
+        total = db.execute(count_sql, {"query": query}).scalar()
+
+        return entries, total
