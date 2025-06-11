@@ -1,5 +1,5 @@
 from server.models.schemas import EntryCreate
-from server.services.entries import EntryService
+from server.services.shared import EntryService
 
 
 def test_create_entry(db_session, test_user):

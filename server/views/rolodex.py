@@ -6,9 +6,8 @@ from typing import Optional
 from server.security import get_current_user, get_db
 from server.models.entities import User, Entry, Tag
 from server.models.schemas import EntryCreate
-from server.services.entries import EntryService
-from server.services.filters import EntryFilter
-from server.utils.tags import resolve_tags
+from server.services.user import UserEntryService
+from server.services.shared import EntryFilter
 from fastapi.templating import Jinja2Templates
 
 templates = Jinja2Templates(directory="server/templates")
@@ -28,7 +27,7 @@ def rolodex(
     offset = (page - 1) * limit
 
     if q:
-        entries, total = EntryService.search_user_entries_fts(
+        entries, total = UserEntryService.search_entries(
             db, user_id=user.id, query=q, limit=limit, offset=offset
         )
     else:
@@ -80,7 +79,7 @@ def create_entry_from_form(
 ):
     tag_list = [t.strip() for t in tags.split(",") if t.strip()]
     entry_in = EntryCreate(url=url, title=title, notes=notes, tags=tag_list)
-    EntryService.create_entry(db, entry_in, user.id)
+    UserEntryService.create_entry(db, entry_in, user.id)
     return RedirectResponse("/rolodex", status_code=303)
 
 
@@ -93,7 +92,7 @@ def edit_entry_form(
 ):
     entry = (
         db.get(Entry, entry_id)
-        if user.is_admin else EntryService.get_entry_by_id(db, entry_id, user.id)
+        if user.is_admin else UserEntryService.get_entry_by_id(db, entry_id, user.id)
     )
     if not entry:
         raise HTTPException(status_code=404, detail="Entry not found")
@@ -111,19 +110,13 @@ def edit_entry(
     user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    entry = db.get(Entry, entry_id)
-    if not entry or (not user.is_admin and entry.user_id != user.id):
-        raise HTTPException(status_code=404, detail="Entry not found")
-
     tag_list = [t.strip() for t in tags.split(",") if t.strip()]
-    entry.title = title
-    entry.url = url
-    entry.notes = notes
-    entry.tags = resolve_tags(db, tag_list)
-    db.commit()
+    entry_data = EntryCreate(title=title, url=url, notes=notes, tags=tag_list)
+    
+    UserEntryService.update_entry(db, entry_id, user.id, entry_data)
 
     return RedirectResponse(
-        "/admin" if entry.is_public_copy else "/rolodex",
+        "/admin" if user.is_admin else "/rolodex",
         status_code=302
     )
 
@@ -134,14 +127,11 @@ def delete_entry(
     user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    entry = db.query(Entry).get(entry_id)
-    if not entry or (not user.is_admin and entry.user_id != user.id):
-        raise HTTPException(status_code=404, detail="Entry not found")
 
-    EntryService.soft_delete_entry(db, entry_id, user.id)
+    UserEntryService.soft_delete_entry(db, entry_id, user.id)
 
     return RedirectResponse(
-        "/admin" if entry.is_public_copy else "/rolodex",
+        "/admin" if user.is_admin else "/rolodex",
         status_code=302
     )
 
@@ -152,7 +142,7 @@ def submit_entry_for_review(
     user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    entry = EntryService.get_entry_by_id(db, entry_id, user.id)
+    entry = UserEntryService.get_entry_by_id(db, entry_id, user.id)
     if not entry or entry.is_deleted:
         raise HTTPException(status_code=404, detail="Entry not found")
     if entry.is_public_copy:

@@ -3,10 +3,8 @@ from fastapi.responses import HTMLResponse
 from sqlalchemy.orm import Session
 from typing import Optional
 
-from server.models.entities import Entry
 from server.security import get_db, get_optional_user
-from server.services.entries import EntryService
-from server.services.filters import EntryFilter
+from server.services.shared import SharedEntryService, EntryFilter
 from fastapi.templating import Jinja2Templates
 
 templates = Jinja2Templates(directory="server/templates")
@@ -27,7 +25,7 @@ def yellowpages(
     offset = (page - 1) * limit
 
     if q:
-        entries, total = EntryService.search_public_entries_fts(
+        entries, total = SharedEntryService.search_public_entries_fts(
             db, query=q, limit=limit, offset=offset
         )
     else:

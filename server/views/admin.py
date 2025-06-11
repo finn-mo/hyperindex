@@ -1,13 +1,12 @@
-from datetime import datetime, timezone
-
-from fastapi import APIRouter, Request, Depends, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Request, Depends, Query
 from fastapi.responses import RedirectResponse, HTMLResponse
 from sqlalchemy.orm import Session
 from fastapi.templating import Jinja2Templates
 
 from server.models.entities import Entry, User
-from server.services.entries import EntryService
-from server.security import get_current_user, get_db, require_admin
+from server.models.schemas import EntryCreate
+from server.services.admin import AdminEntryService
+from server.security import get_db, require_admin
 
 templates = Jinja2Templates(directory="server/templates")
 router = APIRouter()
@@ -27,9 +26,9 @@ def admin_panel(
     offset_public = (page_public - 1) * limit
     offset_deleted = (page_deleted - 1) * limit
 
-    pending_entries, total_pending = EntryService.get_pending_submissions(db, limit=limit, offset=offset_pending)
-    public_entries, total_public = EntryService.get_public_entries(db, limit=limit, offset=offset_public)
-    deleted_entries, total_deleted = EntryService.get_deleted_entries(db, limit=limit, offset=offset_deleted)
+    pending_entries, total_pending = AdminEntryService.get_pending_submissions(db, limit=limit, offset=offset_pending)
+    public_entries, total_public = AdminEntryService.get_public_entries(db, limit=limit, offset=offset_public)
+    deleted_entries, total_deleted = AdminEntryService.get_deleted_entries(db, limit=limit, offset=offset_deleted)
 
     return templates.TemplateResponse("admin_panel.html", {
         "request": request,
@@ -46,8 +45,6 @@ def admin_panel(
     })
 
 
-
-
 @router.post("/admin/approve/{entry_id}")
 def approve_entry(
     entry_id: int,
@@ -55,31 +52,9 @@ def approve_entry(
     page_public: int = Query(1),
     active_tab: str = Query("pending"),
     db: Session = Depends(get_db),
-    user: User = Depends(get_current_user)
+    user: User = Depends(require_admin)
 ):
-    if not user.is_admin:
-        raise HTTPException(status_code=403, detail="Access denied")
-
-    entry = db.get(Entry, entry_id)
-    if not entry:
-        raise HTTPException(status_code=404, detail="Entry not found")
-    if entry.is_public_copy:
-        raise HTTPException(status_code=400, detail="Entry already approved")
-
-    cloned_tags = entry.tags[:]
-    admin_entry = Entry(
-        title=entry.title,
-        url=entry.url,
-        notes=entry.notes,
-        user_id=user.id,
-        is_public_copy=True,
-        original_id=entry.id,
-        tags=cloned_tags,
-    )
-    db.add(admin_entry)
-    entry.submitted_to_public = False
-    db.commit()
-
+    AdminEntryService.approve_entry(db, entry_id, user)
     return RedirectResponse(
         f"/admin?page_pending={page_pending}&page_public={page_public}#tab-{active_tab}",
         status_code=302
@@ -93,24 +68,57 @@ def reject_entry(
     page_public: int = Query(1),
     active_tab: str = Query("pending"),
     db: Session = Depends(get_db),
-    user: User = Depends(get_current_user)
+    user: User = Depends(require_admin)
 ):
-    if not user.is_admin:
-        raise HTTPException(status_code=403, detail="Access denied")
-
-    entry = db.get(Entry, entry_id)
-    if not entry:
-        raise HTTPException(status_code=404, detail="Entry not found")
-    if entry.is_public_copy:
-        raise HTTPException(status_code=400, detail="Cannot reject an already approved entry")
-
-    entry.submitted_to_public = False
-    db.commit()
-
+    AdminEntryService.reject_entry(db, entry_id)
     return RedirectResponse(
         f"/admin?page_pending={page_pending}&page_public={page_public}#tab-{active_tab}",
         status_code=302
     )
+
+
+@router.get("/admin/edit/{entry_id}", response_class=HTMLResponse)
+def edit_admin_entry_form(
+    entry_id: int,
+    request: Request,
+    db: Session = Depends(get_db),
+    user: User = Depends(require_admin)
+):
+    entry = db.get(Entry, entry_id)
+    if not entry or not entry.is_public_copy:
+        raise HTTPException(status_code=404, detail="Entry not found")
+
+    return templates.TemplateResponse("edit_entry_admin.html", {
+        "request": request,
+        "entry": entry,
+        "user": user
+    })
+
+
+@router.post("/admin/edit/{entry_id}")
+async def update_admin_entry(
+    entry_id: int,
+    request: Request,
+    db: Session = Depends(get_db),
+    user: User = Depends(require_admin)
+):
+    form_data = await request.form()
+    title = form_data.get("title", "").strip()
+    url = form_data.get("url", "").strip()
+    notes = form_data.get("notes", "").strip()
+    tags_raw = form_data.get("tags", "")
+    tag_list = [tag.strip() for tag in tags_raw.split(",") if tag.strip()]
+
+    entry_data = EntryCreate(
+        title=title,
+        url=url,
+        notes=notes,
+        tags=tag_list
+    )
+
+    AdminEntryService.update_entry(db, entry_id, entry_data)
+
+    return RedirectResponse("/admin#tab-public", status_code=302)
 
 
 @router.post("/admin/delete/{entry_id}")
@@ -125,13 +133,7 @@ async def delete_admin_entry(
     page_public = form_data.get("page_public", "1")
     active_tab = form_data.get("active_tab", "pending")
 
-    entry = db.get(Entry, entry_id)
-    if not entry or not entry.is_public_copy:
-        raise HTTPException(status_code=404, detail="Entry not found or not an admin entry")
-
-    entry.deleted_at = datetime.now(timezone.utc)
-    entry.is_deleted = True
-    db.commit()
+    AdminEntryService.delete_entry(db, entry_id)
 
     redirect_url = f"/admin?page_pending={page_pending}&page_public={page_public}#tab-{active_tab}"
     return RedirectResponse(redirect_url, status_code=302)
@@ -150,13 +152,7 @@ async def restore_admin_entry(
     page_public = form_data.get("page_public", "1")
     active_tab = form_data.get("active_tab", "deleted")
 
-    entry = db.get(Entry, entry_id)
-    if not entry or not entry.is_public_copy or not entry.is_deleted:
-        raise HTTPException(status_code=404, detail="Cannot restore entry")
-
-    entry.is_deleted = False
-    entry.deleted_at = None
-    db.commit()
+    AdminEntryService.restore_entry(db, entry_id)
 
     redirect_url = (
         f"/admin?page_pending={page_pending}&page_public={page_public}"
@@ -178,12 +174,7 @@ async def purge_admin_entry(
     page_public = form_data.get("page_public", "1")
     active_tab = form_data.get("active_tab", "deleted")
 
-    entry = db.get(Entry, entry_id)
-    if not entry or not entry.is_public_copy or not entry.is_deleted:
-        raise HTTPException(status_code=404, detail="Cannot purge entry")
-
-    db.delete(entry)
-    db.commit()
+    AdminEntryService.purge_entry(db, entry_id)
 
     redirect_url = (
         f"/admin?page_pending={page_pending}&page_public={page_public}"
