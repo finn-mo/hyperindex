@@ -99,3 +99,8 @@ def get_optional_user(access_token: Optional[str], db: Session) -> Optional[User
             return db.query(User).filter_by(username=username).first()
     except JWTError:
         return None
+    
+def require_admin(user: User = Depends(get_current_user)) -> User:
+    if not user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    return user

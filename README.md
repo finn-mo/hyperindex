@@ -5,28 +5,34 @@
 Hyperindex is a lightweight web app for curating and sharing independent websites. Inspired by the early internet, it lets users build a personal Rolodex and explore a shared Yellow Pages of user-submitted sites. Designed for the indie web and independent browsing. Built with FastAPI, Jinja2, and SQLite.
 
 ## Features
-- **Personal Rolodex** (`/rolodex`) — view, add, edit, and delete your own bookmarks
 - **Public Yellow Pages** (`/`) — browse entries shared by all users
+- **Personal Rolodex** (`/rolodex`) — view, add, edit, and delete your own bookmarks
+- **Admin moderation panel** (`/admin`) — tabbed interface for managing user submissions: admins approve entries by forking them into public copies; original user entries remain unchanged
 - **User authentication** — register and log in to manage personal entries
 - **Tagging and full-text search** — fast, SQLite FTS-backed search on both personal and public entries, with filtering and pagination
 - **Submission system** — users submit entries for admin review
 - **Paginated directory** — browse entries in a classic "directory" format
-- **Moderation model** — admins approve submissions by forking them into public copies; users retain control over their original entries
 - **Unified navigation bar** — easily switch between public, personal, and admin views
 - **Fast and lightweight** — built with FastAPI + Jinja2 + SQLite
 
 ## Roles
-| Role  | Add/Edit/Delete Own  | Submit to Public  | Edit Approved Public  | Approve/Reject |
-|-------|----------------------|-------------------|-----------------------|----------------|
-| User  | Yes                  | Yes               | No                    | No             |
-| Admin | Yes                  | Yes               | Yes (forked copy only)| Yes            |
+**User**
+- Can create, edit, and delete their own entries
+- Can submit entries to the public Yellow Pages
+- Cannot modify entries once published to the public directory
+
+**Admin**
+- Can do everything a user can
+- Can approve or reject submissions
+- Approved entries are forked into admin-managed public copies
+- Can edit or delete public entries (admin copies only)
 
 
 ## Installation
 ```bash
 git clone https://github.com/finn-mo/hyperindex.git
 cd hyperindex
-python -m venv venv                     # Requires Python 3.12+
+python -m venv venv
 source venv/bin/activate                # On Windows: .\venv\Scripts\activate
 pip install -r requirements.txt
 ```

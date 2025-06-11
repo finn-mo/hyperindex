@@ -41,6 +41,7 @@ class Entry(Base):
     is_deleted = Column(Boolean, default=False)
     is_public_copy = Column(Boolean, default=False)
     submitted_to_public = Column(Boolean, default=False)
+    deleted_at = Column(DateTime, nullable=True, default=None)
 
     # Relationships
     user_id = Column(Integer, ForeignKey("users.id"))

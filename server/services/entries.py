@@ -57,6 +57,58 @@ class EntryService:
         if not entry:
             raise NoResultFound("Entry not found or access denied")
         return entry
+    
+
+    @staticmethod
+    def get_pending_submissions(db: Session, limit: int = 10, offset: int = 0):
+        """
+        Return entries submitted for public listing but not yet approved,
+        excluding deleted ones.
+        """
+        q = (
+            db.query(Entry)
+            .filter(
+                Entry.submitted_to_public == True,
+                Entry.is_public_copy == False,
+                Entry.is_deleted == False
+            )
+            .order_by(Entry.id.desc())
+        )
+        total = q.count()
+        entries = q.offset(offset).limit(limit).all()
+        return entries, total
+    
+    @staticmethod
+    def get_public_entries(db: Session, limit: int = 10, offset: int = 0):
+        """
+        Return admin-approved public entries (forked copies), excluding deleted ones.
+        """
+        q = (
+            db.query(Entry)
+            .filter(
+                Entry.is_public_copy == True,
+                Entry.is_deleted == False
+            )
+            .order_by(Entry.id.desc())
+        )
+        total = q.count()
+        entries = q.offset(offset).limit(limit).all()
+        return entries, total
+
+
+    @staticmethod
+    def get_deleted_entries(db: Session, limit: int, offset: int) -> tuple[list[Entry], int]:
+        """
+        Return soft-deleted admin-approved public entries (forked copies).
+        """
+        query = db.query(Entry).filter(
+            Entry.is_public_copy == True,
+            Entry.is_deleted == True
+        ).order_by(Entry.deleted_at.desc())
+        total = query.count()
+        entries = query.offset(offset).limit(limit).all()
+        return entries, total
+
 
     @staticmethod
     def create_entry(db: Session, entry_in: EntryCreate, user_id: int) -> Entry:

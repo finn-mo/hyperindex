@@ -8,6 +8,10 @@
 - Entry submission and admin approval system
 - Role-based permissions for entry submission and moderation
 - Admin-managed Yellow Pages entries are forked copies of user submissions
+- Admin panel with tabbed interface for moderating:
+  - Pending submissions
+  - Approved public entries
+  - Deleted entries (with restore/purge actions)
 - Tag-aware, full-text search (FTS-backed) with multi-tag filters and clickable tag navigation
 - Accessibility improvements (ARIA roles, `:focus` states, screen reader support)
 - JWT-based login/logout system with secure session cookies
