@@ -118,3 +118,10 @@ class AdminEntryService:
         total = query.count()
         entries = query.offset(offset).limit(limit).all()
         return entries, total
+
+    @staticmethod
+    def get_entry_for_edit(db: Session, entry_id: int) -> Entry:
+        entry = db.get(Entry, entry_id)
+        if not entry or not entry.is_public_copy:
+            raise HTTPException(status_code=404, detail="Entry not found")
+        return entry

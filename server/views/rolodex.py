@@ -43,13 +43,7 @@ def rolodex(
             per_page=limit
         )
 
-    all_tags = (
-        db.query(Tag.name)
-        .join(Entry.tags)
-        .filter(Entry.user_id == user.id, Entry.is_deleted == False)
-        .distinct()
-        .all()
-    )
+    all_tags = UserEntryService.get_user_tags(db, user.id)
 
     return templates.TemplateResponse(
         "rolodex.html",
@@ -94,10 +88,7 @@ def edit_entry_form(
     user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    entry = (
-        db.get(Entry, entry_id)
-        if user.is_admin else SharedEntryService.get_entry_by_id(db, entry_id, user.id)
-    )
+    entry = SharedEntryService.get_entry_by_id(db, entry_id, user.id)
     if not entry:
         raise HTTPException(status_code=404, detail="Entry not found")
 

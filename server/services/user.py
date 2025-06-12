@@ -4,7 +4,7 @@ from typing import List, Tuple
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
-from server.models.entities import Entry
+from server.models.entities import Entry, Tag
 from server.models.schemas import EntryCreate
 from server.services.shared import SharedEntryService, TagService
 
@@ -106,3 +106,15 @@ class UserEntryService:
         }).scalar()
 
         return entries, total
+    
+    @staticmethod
+    def get_user_tags(db: Session, user_id: int) -> List[str]:
+        return [
+            tag for (tag,) in (
+                db.query(Tag.name)
+                .join(Entry.tags)
+                .filter(Entry.user_id == user_id, Entry.is_deleted == False)
+                .distinct()
+                .all()
+            )
+        ]

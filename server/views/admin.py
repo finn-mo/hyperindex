@@ -92,9 +92,7 @@ def edit_admin_entry_form(
     db: Session = Depends(get_db),
     user: User = Depends(require_admin)
 ):
-    entry = db.get(Entry, entry_id)
-    if not entry or not entry.is_public_copy:
-        raise HTTPException(status_code=404, detail="Entry not found")
+    entry = AdminEntryService.get_entry_for_edit(db, entry_id)
 
     return templates.TemplateResponse("edit_entry_admin.html", {
         "request": request,
