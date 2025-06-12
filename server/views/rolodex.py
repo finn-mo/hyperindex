@@ -1,14 +1,17 @@
+from typing import Optional
+
 from fastapi import APIRouter, Request, Depends, Form, HTTPException, Query
 from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
-from typing import Optional
 
 from server.security import get_current_user, get_db
 from server.models.entities import User, Entry, Tag
 from server.models.schemas import EntryCreate
 from server.services.user import UserEntryService
 from server.services.shared import EntryFilter
-from fastapi.templating import Jinja2Templates
+from server.utils.context import build_rolodex_context
+
 
 templates = Jinja2Templates(directory="server/templates")
 router = APIRouter()
@@ -47,20 +50,20 @@ def rolodex(
         .all()
     )
 
-    total_pages = (total // limit) + (1 if total % limit > 0 else 0)
-    return templates.TemplateResponse(request, "rolodex.html", {
-        "user": user,
-        "entries": entries,
-        "page": page,
-        "limit": limit,
-        "total": total,
-        "total_pages": total_pages,
-        "has_prev": page > 1,
-        "has_next": (page * limit) < total,
-        "selected_tag": tag,
-        "query": q,
-        "all_tags": [t[0] for t in all_tags],
-    })
+    return templates.TemplateResponse(
+        "rolodex.html",
+        build_rolodex_context(
+            request=request,
+            user=user,
+            entries=entries,
+            page=page,
+            limit=limit,
+            total=total,
+            tag=tag,
+            query=q,
+            all_tags=[t[0] for t in all_tags],
+        )
+    )
 
 
 @router.get("/entries/new", response_class=HTMLResponse)

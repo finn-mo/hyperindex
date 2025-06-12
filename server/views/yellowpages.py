@@ -3,9 +3,11 @@ from fastapi.responses import HTMLResponse
 from sqlalchemy.orm import Session
 from typing import Optional
 
+from fastapi.templating import Jinja2Templates
+
 from server.security import get_db, get_optional_user
 from server.services.shared import SharedEntryService, EntryFilter
-from fastapi.templating import Jinja2Templates
+from server.utils.context import build_yellowpages_context
 
 templates = Jinja2Templates(directory="server/templates")
 router = APIRouter()
@@ -37,17 +39,8 @@ def yellowpages(
             per_page=limit
         )
 
-    total_pages = (total // limit) + (1 if total % limit > 0 else 0)
-
-    return templates.TemplateResponse(request, "yellowpages.html", {
-        "user": user,
-        "entries": entries,
-        "query": q,
-        "tag": tag,
-        "page": page,
-        "limit": limit,
-        "total": total,
-        "total_pages": total_pages,
-        "has_prev": page > 1,
-        "has_next": (page * limit) < total,
-    })
+    return templates.TemplateResponse(
+        request,
+        "yellowpages.html",
+        build_yellowpages_context(user, entries, page, limit, total, tag, q)
+    )

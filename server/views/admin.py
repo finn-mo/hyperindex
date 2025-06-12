@@ -7,6 +7,7 @@ from server.models.entities import Entry, User
 from server.models.schemas import EntryCreate
 from server.services.admin import AdminEntryService
 from server.security import get_db, require_admin
+from server.utils.context import build_admin_panel_context
 
 templates = Jinja2Templates(directory="server/templates")
 router = APIRouter()
@@ -30,19 +31,24 @@ def admin_panel(
     public_entries, total_public = AdminEntryService.get_public_entries(db, limit=limit, offset=offset_public)
     deleted_entries, total_deleted = AdminEntryService.get_deleted_entries(db, limit=limit, offset=offset_deleted)
 
-    return templates.TemplateResponse("admin_panel.html", {
-        "request": request,
-        "user": user,
-        "pending_entries": pending_entries,
-        "public_entries": public_entries,
-        "deleted_entries": deleted_entries,
-        "page_pending": page_pending,
-        "page_public": page_public,
-        "page_deleted": page_deleted,
-        "total_pages_pending": (total_pending + limit - 1) // limit,
-        "total_pages_public": (total_public + limit - 1) // limit,
-        "total_pages_deleted": (total_deleted + limit - 1) // limit,
-    })
+    return templates.TemplateResponse(
+        "admin_panel.html",
+        build_admin_panel_context(
+            request=request,
+            user=user,
+            pending_entries=pending_entries,
+            total_pending=total_pending,
+            page_pending=page_pending,
+            public_entries=public_entries,
+            total_public=total_public,
+            page_public=page_public,
+            deleted_entries=deleted_entries,
+            total_deleted=total_deleted,
+            page_deleted=page_deleted,
+            limit=limit,
+        )
+    )
+
 
 
 @router.post("/admin/approve/{entry_id}")
