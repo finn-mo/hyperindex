@@ -13,33 +13,12 @@
 
   <section aria-labelledby="search-entries">
     <h2 id="search-entries" class="sr-only">Search Entries</h2>
-    <form method="get" action="/" role="search">
-      <label for="q" class="sr-only">Search</label>
-      <input
-        id="q"
-        type="text"
-        name="q"
-        value="{{ query or '' }}"
-        placeholder="Search entries..."
-        autocomplete="off"
-      >
-      <button type="submit">Search</button>
-      {% if query %}
-        <a href="/" class="clear-btn">Clear</a>
-      {% endif %}
-    </form>
+    {% include "partials/_filter_form.html" with context %}
+    {% from "macros/filters.html" import render_filters %}
+    {{ render_filters(query, tag, total, page, total_pages, "/") }}
   </section>
 
-  {% if tag %}
-    <p>Filtering by tag: <strong>{{ tag }}</strong> —
-      <a href="/">Clear Filter</a>
-    </p>
-  {% endif %}
-
-  {% if query %}
-    <p><strong>{{ entries|length }}</strong> results for <em>"{{ query }}"</em>
-      (page {{ page }} of {{ total_pages }})</p>
-  {% else %}
+  {% if query is not defined or not query %}
     <p>Showing <strong>{{ entries|length }}</strong> of <strong>{{ total }}</strong> entries
       (page {{ page }} of {{ total_pages }})</p>
   {% endif %}
@@ -49,7 +28,7 @@
       {% set card_index = loop.index %}
       {% set tag_prefix = '/?tag=' %}
       {% set show_actions = False %}
-      {% include "partials/entry_card.html" %}
+      {% include "partials/_entry_card.html" %}
     {% endfor %}
   {% else %}
     <div class="empty-state" role="note">
@@ -58,5 +37,5 @@
     </div>
   {% endif %}
 
-  {% include "partials/pagination.html" with context %}
+  {% include "partials/_pagination.html" with context %}
 {% endblock %}

@@ -20,33 +20,10 @@
 
   <section aria-labelledby="your-entries">
     <h2 id="your-entries">Your Entries</h2>
-    <form method="get" action="/rolodex" style="margin-bottom: 1rem;">
-      <input
-        type="text"
-        name="q"
-        value="{{ query or '' }}"
-        placeholder="Search your entries..."
-        style="padding: 4px 6px; font-size: 0.85rem;"
-      >
-      {% if selected_tag %}
-        <input type="hidden" name="tag" value="{{ selected_tag }}">
-      {% endif %}
-      <button type="submit" style="padding: 4px 10px; font-size: 0.85rem;">Search</button>
-    </form>
+    {% include "partials/_filter_form.html" with context %}
+    {% from "macros/filters.html" import render_filters %}
+    {{ render_filters(query, selected_tag, total, page, total_pages, "/rolodex") }}
 
-    {% if selected_tag %}
-      <p>
-        Filtering by tag: <strong>{{ selected_tag }}</strong> —
-        <a href="/rolodex">Clear Filter</a>
-      </p>
-    {% endif %}
-
-    {% if query %}
-      <p>
-        Searching for: <strong>{{ query }}</strong>
-        <a href="/rolodex{% if selected_tag %}?tag={{ selected_tag }}{% endif %}">Clear Search</a>
-      </p>
-    {% endif %}
 
     <p>
       Showing <strong>{{ entries|length }}</strong> of <strong>{{ total }}</strong> entries
@@ -57,9 +34,9 @@
       {% set card_index = loop.index %}
       {% set tag_prefix = '/rolodex?tag=' %}
       {% set show_actions = True %}
-      {% include "partials/entry_card.html" %}
+      {% include "partials/_entry_card.html" %}
     {% endfor %}
 
-    {% include "partials/pagination.html" with context %}
+    {% include "partials/_pagination.html" with context %}
   </section>
 {% endblock %}

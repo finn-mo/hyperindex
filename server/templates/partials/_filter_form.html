@@ -1,0 +1,11 @@
+<form method="get" action="{{ action }}" class="filter-form">
+  <div class="filter-fields">
+    <input type="text" name="q" placeholder="Search..." value="{{ query or '' }}">
+
+    {% if tag_field %}
+      <input type="hidden" name="tag" value="{{ tag }}">
+    {% endif %}
+
+    <button type="submit">Search</button>
+  </div>
+</form>

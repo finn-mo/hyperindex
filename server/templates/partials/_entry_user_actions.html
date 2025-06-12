@@ -1,4 +1,4 @@
-{% from 'partials/macros.html' import action_button %}
+{% from 'macros/shared.html' import action_button %}
 
 <div class="actions">
   {{ action_button("Edit", "/entries/" ~ entry.id ~ "/edit", method="GET", aria_label="Edit this entry") }}

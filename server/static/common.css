@@ -169,6 +169,14 @@ button:disabled,
   padding: 1rem;
 }
 
+/* Search bar */
+.filter-fields {
+  display: flex;
+  flex: 1;
+  gap: 0.25rem;
+  width: 100%;
+}
+
 /* Card layout*/
 .card {
   margin: 0.25rem 0;

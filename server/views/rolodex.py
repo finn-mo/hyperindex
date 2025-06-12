@@ -56,7 +56,7 @@ def rolodex(
             total=total,
             tag=tag,
             query=q,
-            all_tags=[t[0] for t in all_tags],
+            all_tags=[t[0] for t in all_tags]
         )
     )
 

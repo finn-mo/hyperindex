@@ -1,0 +1,17 @@
+{% macro render_filters(query, tag, total, page, total_pages, context_url) %}
+  <div class="filters-summary">
+    {% if tag %}
+      <p>
+        Filtering by tag: <strong>{{ tag }}</strong> —
+        <a href="{{ context_url }}{% if query %}?q={{ query }}{% endif %}">Clear Tag</a>
+      </p>
+    {% endif %}
+
+    {% if query %}
+      <p>
+        Searching for: <strong>{{ query }}</strong>
+        <a href="{{ context_url }}{% if tag %}?tag={{ tag }}{% endif %}">Clear Search</a>
+      </p>
+    {% endif %}
+  </div>
+{% endmacro %}

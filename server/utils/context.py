@@ -16,6 +16,8 @@ def build_yellowpages_context(user, entries, page, limit, total, tag, query):
         "entries": entries,
         "tag": tag,
         "query": query,
+        "action": "/",
+        "tag_field": bool(tag),
         **build_pagination_context(page, limit, total)
     }
 
@@ -25,11 +27,14 @@ def build_rolodex_context(request, user, entries, page, limit, total, tag, query
         "request": request,
         "user": user,
         "entries": entries,
-        "selected_tag": tag,
+        "tag": tag,
         "query": query,
         "all_tags": all_tags,
+        "action": "/rolodex",
+        "tag_field": bool(tag),
         **build_pagination_context(page, limit, total)
     }
+
 
 
 def build_admin_panel_context(
