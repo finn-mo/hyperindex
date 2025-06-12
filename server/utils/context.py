@@ -23,11 +23,11 @@ def build_pagination_context(page: int, limit: int, total: int) -> dict:
     }
 
 
-def build_yellowpages_context(user, entries, page, limit, total, tag, query):
+def build_yellowpages_context(user, entries, page, limit, total, tag, query, sort):
     """
     Build template context for the public Yellow Pages view.
 
-    Includes pagination, filtering fields, and user state if available.
+    Includes pagination, filtering fields, sort state, and user context.
 
     Args:
         user: Optional user object (may be None).
@@ -37,6 +37,7 @@ def build_yellowpages_context(user, entries, page, limit, total, tag, query):
         total (int): Total entry count.
         tag (str): Tag filter string (or None).
         query (str): Search query string (or None).
+        sort (str): Sorting mode, e.g., "newest" or "alpha".
 
     Returns:
         dict: Render context dictionary for yellowpages.html.
@@ -48,11 +49,11 @@ def build_yellowpages_context(user, entries, page, limit, total, tag, query):
         "query": query,
         "action": "/",
         "tag_field": bool(tag),
+        "sort": sort,
         **build_pagination_context(page, limit, total)
     }
 
-
-def build_rolodex_context(request, user, entries, page, limit, total, tag, query, all_tags):
+def build_rolodex_context(request, user, entries, page, limit, total, tag, query, all_tags, sort):
     """
     Build template context for a user's private Rolodex dashboard.
 
@@ -68,6 +69,7 @@ def build_rolodex_context(request, user, entries, page, limit, total, tag, query
         tag (str): Tag filter (if any).
         query (str): Search query (if any).
         all_tags (List[str]): List of all user tag strings.
+        sort (str): Sorting mode, e.g., "newest" or "alpha".
 
     Returns:
         dict: Render context for rolodex.html.
@@ -81,6 +83,7 @@ def build_rolodex_context(request, user, entries, page, limit, total, tag, query
         "all_tags": all_tags,
         "action": "/rolodex",
         "tag_field": bool(tag),
+        "sort": sort,
         **build_pagination_context(page, limit, total)
     }
 

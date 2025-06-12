@@ -68,7 +68,8 @@ class SharedEntryService:
         db: Session,
         query: str,
         limit: int = 10,
-        offset: int = 0
+        offset: int = 0,
+        sort: str = "recent"
     ) -> Tuple[List[Entry], int]:
         """
         Perform full-text search on public entries using SQLite FTS.
@@ -78,6 +79,7 @@ class SharedEntryService:
             query (str): Full-text search query string.
             limit (int): Maximum number of entries to return.
             offset (int): Number of entries to skip.
+            sort (str): Sorting method - 'recent' (default) or 'alpha'.
 
         Returns:
             Tuple[List[Entry], int]: List of matched entries and total result count.
@@ -104,12 +106,13 @@ class SharedEntryService:
         if not ids:
             return [], 0
 
-        entries = (
-            db.query(Entry)
-            .filter(Entry.id.in_(ids))
-            .order_by(Entry.id.desc())
-            .all()
-        )
+        entries_query = db.query(Entry).filter(Entry.id.in_(ids))
+        if sort == "alpha":
+            entries_query = entries_query.order_by(Entry.title.asc())
+        else:
+            entries_query = entries_query.order_by(Entry.id.desc())
+
+        entries = entries_query.all()
 
         count_sql = text("""
             SELECT COUNT(*)
@@ -169,7 +172,8 @@ class EntryQueryService:
         tag: Optional[str] = None,
         query: Optional[str] = None,
         page: int = 1,
-        per_page: int = 10
+        per_page: int = 10,
+        sort: str = "recent"
     ) -> Tuple[List[Entry], int]:
         """
         Retrieve entries based on various filter options.
@@ -182,6 +186,7 @@ class EntryQueryService:
             query (Optional[str]): Perform LIKE-based full-text match.
             page (int): Page number (1-indexed).
             per_page (int): Entries per page.
+            sort (str): Sorting method - 'recent' (default) or 'alpha'.
 
         Returns:
             Tuple[List[Entry], int]: List of entries and total count.
@@ -199,27 +204,23 @@ class EntryQueryService:
         if query:
             ef = ef._full_text_search_like(query)
 
-        entries = ef._paginate(page, per_page)._all()
+        entries = ef._paginate(page, per_page, sort)._all()
         total = ef._count()
         return entries, total
 
     def _filter_by_user(self, user_id):
-        """Restrict entries to a specific user, excluding public copies."""
         self.query = self.query.filter(Entry.user_id == user_id, Entry.is_public_copy == False)
         return self
 
     def _filter_public_only(self):
-        """Restrict query to admin-approved public entries only."""
         self.query = self.query.filter(Entry.is_public_copy == True)
         return self
 
     def _filter_by_tag(self, tag):
-        """Filter entries by a specific tag name."""
         self.query = self.query.filter(Entry.tags.any(Tag.name == tag))
         return self
 
     def _full_text_search_like(self, query):
-        """Apply LIKE-based full-text search on title, notes, or URL."""
         pattern = f"%{query}%"
         self.query = self.query.filter(
             or_(
@@ -230,21 +231,20 @@ class EntryQueryService:
         )
         return self
 
-    def _paginate(self, page: int, per_page: int):
-        """Apply pagination to the query."""
-        self.query = self.query.order_by(Entry.id.desc())
+    def _paginate(self, page: int, per_page: int, sort: str = "recent"):
+        if sort == "alpha":
+            self.query = self.query.order_by(Entry.title.asc())
+        else:
+            self.query = self.query.order_by(Entry.id.desc())
         self.query = self.query.offset((page - 1) * per_page).limit(per_page)
         return self
 
     def _all(self):
-        """Execute the query and return all matching entries."""
         return self.query.all()
 
     def _count(self):
-        """Return the total count of entries matching current filters."""
         return self.query.count()
 
     def _filter_deleted(self, is_deleted: bool = False):
-        """Include or exclude deleted entries based on boolean flag."""
         self.query = self.query.filter(Entry.is_deleted == is_deleted)
         return self

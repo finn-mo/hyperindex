@@ -25,9 +25,11 @@ def rolodex(
     q: Optional[str] = Query(None),
     page: int = Query(1, ge=1),
     limit: int = 10,
+    sort: str = Query("alpha", pattern="^(recent|alpha)$"),
     user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
+
     """
     Render the user's private Rolodex view.
 
@@ -40,6 +42,7 @@ def rolodex(
         q (Optional[str]): Full-text query string.
         page (int): Current pagination page (1-indexed).
         limit (int): Number of entries per page.
+        sort (str): Sort order, either "recent" or "alpha".
         user (User): Authenticated user via dependency injection.
         db (Session): SQLAlchemy database session.
 
@@ -50,15 +53,22 @@ def rolodex(
 
     if q:
         entries, total = UserEntryService.search_entries(
-            db, user_id=user.id, query=q, limit=limit, offset=offset_value
+            db,
+            user_id=user.id,
+            query=q,
+            limit=limit,
+            offset=offset_value,
+            sort=sort
         )
     else:
         entries, total = EntryQueryService.get_entries(
             db=db,
             user_id=user.id,
             tag=tag,
+            query=q,
             page=page,
-            per_page=limit
+            per_page=limit,
+            sort=sort
         )
 
     all_tags = UserEntryService.get_user_tags(db, user.id)
@@ -74,7 +84,8 @@ def rolodex(
             total=total,
             tag=tag,
             query=q,
-            all_tags=[t[0] for t in all_tags]
+            all_tags=[t[0] for t in all_tags],
+            sort=sort
         )
     )
 

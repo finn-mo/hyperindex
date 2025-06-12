@@ -115,7 +115,12 @@ class UserEntryService:
 
     @staticmethod
     def search_entries(
-        db: Session, user_id: int, query: str, limit: int = 10, offset: int = 0
+        db: Session,
+        user_id: int,
+        query: str,
+        limit: int = 10,
+        offset: int = 0,
+        sort: str = "recent"
     ) -> Tuple[List[Entry], int]:
         """
         Perform a full-text search on a user's entries using SQLite FTS.
@@ -126,6 +131,7 @@ class UserEntryService:
             query (str): Full-text search query.
             limit (int): Max number of results.
             offset (int): Pagination offset.
+            sort (str): Sorting method - 'recent' (default) or 'alpha'.
 
         Returns:
             Tuple[List[Entry], int]: Search result entries and total count.
@@ -153,12 +159,13 @@ class UserEntryService:
         if not ids:
             return [], 0
 
-        entries = (
-            db.query(Entry)
-            .filter(Entry.id.in_(ids))
-            .order_by(Entry.id.desc())
-            .all()
-        )
+        entries_query = db.query(Entry).filter(Entry.id.in_(ids))
+        if sort == "alpha":
+            entries_query = entries_query.order_by(Entry.title.asc())
+        else:
+            entries_query = entries_query.order_by(Entry.id.desc())
+
+        entries = entries_query.all()
 
         count_sql = text("""
             SELECT COUNT(*)

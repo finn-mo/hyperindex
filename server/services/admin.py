@@ -165,7 +165,7 @@ class AdminEntryService:
                 Entry.is_public_copy == True,
                 Entry.is_deleted == False
             )
-            .order_by(Entry.id.desc())
+            .order_by(Entry.title.asc())
         )
         total = query.count()
         entries = query.offset(offset).limit(limit).all()
@@ -185,7 +185,7 @@ class AdminEntryService:
                 Entry.is_public_copy == True,
                 Entry.is_deleted == True
             )
-            .order_by(Entry.deleted_at.desc())
+            .order_by(Entry.title.asc())
         )
         total = query.count()
         entries = query.offset(offset).limit(limit).all()

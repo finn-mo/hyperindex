@@ -21,13 +21,14 @@ def yellowpages(
     tag: Optional[str] = Query(None),
     page: int = Query(1, ge=1),
     limit: int = 10,
+    sort: str = Query("alpha", pattern="^(recent|alpha)$"),
     access_token: Optional[str] = Cookie(None),
     db: Session = Depends(get_db)
 ):
     """
     Render the public Yellow Pages directory.
 
-    Supports optional full-text search (`q`) and tag filtering (`tag`) with pagination.
+    Supports optional full-text search (`q`), tag filtering (`tag`), pagination, and sorting.
     Uses access token (if present) to identify optional user for context rendering.
 
     Args:
@@ -36,6 +37,7 @@ def yellowpages(
         tag (Optional[str]): Tag filter for narrowing results.
         page (int): Page number for pagination (1-based).
         limit (int): Number of entries per page.
+        sort (str): Sort order, either "recent" or "alpha".
         access_token (Optional[str]): JWT token for optional user context.
         db (Session): Database session dependency.
 
@@ -47,7 +49,7 @@ def yellowpages(
 
     if q:
         entries, total = SharedEntryService.search_public_entries_fts(
-            db, query=q, limit=limit, offset=offset_value
+            db, query=q, limit=limit, offset=offset_value, sort=sort
         )
     else:
         entries, total = EntryQueryService.get_entries(
@@ -55,11 +57,13 @@ def yellowpages(
             public_only=True,
             tag=tag,
             page=page,
-            per_page=limit
+            per_page=limit,
+            sort=sort
         )
+
 
     return templates.TemplateResponse(
         request,
         "yellowpages.html",
-        build_yellowpages_context(user, entries, page, limit, total, tag, q)
+        build_yellowpages_context(user, entries, page, limit, total, tag, q, sort)
     )
