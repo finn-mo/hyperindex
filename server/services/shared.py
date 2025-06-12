@@ -96,8 +96,9 @@ class SharedEntryService:
         db.commit()
 
 
-class EntryFilter:
+class EntryQueryService:
     """Flexible entry filter with tag, text, and user/public options."""
+
     def __init__(self, db_session, base_query):
         self.db = db_session
         self.query = base_query
@@ -114,35 +115,35 @@ class EntryFilter:
         per_page: int = 10
     ) -> Tuple[List[Entry], int]:
         base = db.query(Entry)
-        ef = cls(db, base).filter_deleted(False)
+        ef = cls(db, base)._filter_deleted(False)
 
         if user_id:
-            ef = ef.filter_by_user(user_id)
+            ef = ef._filter_by_user(user_id)
         elif public_only:
-            ef = ef.filter_public_only()
+            ef = ef._filter_public_only()
 
         if tag:
-            ef = ef.filter_by_tag(tag)
+            ef = ef._filter_by_tag(tag)
         if query:
-            ef = ef.full_text_search_like(query)
+            ef = ef._full_text_search_like(query)
 
-        entries = ef.paginate(page, per_page).all()
-        total = ef.count()
+        entries = ef._paginate(page, per_page)._all()
+        total = ef._count()
         return entries, total
 
-    def filter_by_user(self, user_id):
+    def _filter_by_user(self, user_id):
         self.query = self.query.filter(Entry.user_id == user_id, Entry.is_public_copy == False)
         return self
 
-    def filter_public_only(self):
+    def _filter_public_only(self):
         self.query = self.query.filter(Entry.is_public_copy == True)
         return self
 
-    def filter_by_tag(self, tag):
+    def _filter_by_tag(self, tag):
         self.query = self.query.filter(Entry.tags.any(Tag.name == tag))
         return self
 
-    def full_text_search_like(self, query):  # For LIKE fallback
+    def _full_text_search_like(self, query):
         pattern = f"%{query}%"
         self.query = self.query.filter(
             or_(
@@ -153,17 +154,17 @@ class EntryFilter:
         )
         return self
 
-    def paginate(self, page: int, per_page: int):
+    def _paginate(self, page: int, per_page: int):
         self.query = self.query.order_by(Entry.id.desc())
         self.query = self.query.offset((page - 1) * per_page).limit(per_page)
         return self
 
-    def all(self):
+    def _all(self):
         return self.query.all()
 
-    def count(self):
+    def _count(self):
         return self.query.count()
-    
-    def filter_deleted(self, is_deleted: bool = False):
+
+    def _filter_deleted(self, is_deleted: bool = False):
         self.query = self.query.filter(Entry.is_deleted == is_deleted)
         return self

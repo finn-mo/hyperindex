@@ -6,7 +6,7 @@ from typing import Optional
 from fastapi.templating import Jinja2Templates
 
 from server.security import get_db, get_optional_user
-from server.services.shared import SharedEntryService, EntryFilter
+from server.services.shared import EntryQueryService, SharedEntryService
 from server.utils.context import build_yellowpages_context
 from server.utils.pagination import offset
 
@@ -32,7 +32,7 @@ def yellowpages(
             db, query=q, limit=limit, offset=offset_value
         )
     else:
-        entries, total = EntryFilter.get_entries(
+        entries, total = EntryQueryService.get_entries(
             db=db,
             public_only=True,
             tag=tag,

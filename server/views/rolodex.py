@@ -9,7 +9,7 @@ from server.security import get_current_user, get_db
 from server.models.entities import User, Entry, Tag
 from server.models.schemas import EntryCreate
 from server.services.user import UserEntryService
-from server.services.shared import EntryFilter, SharedEntryService
+from server.services.shared import EntryQueryService, SharedEntryService
 from server.utils.context import build_rolodex_context
 from server.utils.pagination import offset
 
@@ -35,7 +35,7 @@ def rolodex(
             db, user_id=user.id, query=q, limit=limit, offset=offset_value
         )
     else:
-        entries, total = EntryFilter.get_entries(
+        entries, total = EntryQueryService.get_entries(
             db=db,
             user_id=user.id,
             tag=tag,
