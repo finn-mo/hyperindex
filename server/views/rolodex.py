@@ -190,17 +190,14 @@ def edit_entry(
         db (Session): Database session.
 
     Returns:
-        RedirectResponse: Redirect to Rolodex or Admin view.
+        RedirectResponse: Redirect to Rolodex.
     """
     tag_list = [t.strip() for t in tags.split(",") if t.strip()]
     entry_data = EntryCreate(title=title, url=url, notes=notes, tags=tag_list)
     
     UserEntryService.update_entry(db, entry_id, user.id, entry_data)
 
-    return RedirectResponse(
-        "/admin" if user.is_admin else "/rolodex",
-        status_code=302
-    )
+    return RedirectResponse("/rolodex", status_code=302)
 
 
 @router.post("/entries/{entry_id}/delete")
