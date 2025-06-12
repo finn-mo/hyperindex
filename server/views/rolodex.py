@@ -11,6 +11,7 @@ from server.models.schemas import EntryCreate
 from server.services.user import UserEntryService
 from server.services.shared import EntryFilter, SharedEntryService
 from server.utils.context import build_rolodex_context
+from server.utils.pagination import offset
 
 
 templates = Jinja2Templates(directory="server/templates")
@@ -27,11 +28,11 @@ def rolodex(
     user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    offset = (page - 1) * limit
+    offset_value = offset(page, limit)
 
     if q:
         entries, total = UserEntryService.search_entries(
-            db, user_id=user.id, query=q, limit=limit, offset=offset
+            db, user_id=user.id, query=q, limit=limit, offset=offset_value
         )
     else:
         entries, total = EntryFilter.get_entries(

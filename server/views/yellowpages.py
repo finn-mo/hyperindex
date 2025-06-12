@@ -8,6 +8,7 @@ from fastapi.templating import Jinja2Templates
 from server.security import get_db, get_optional_user
 from server.services.shared import SharedEntryService, EntryFilter
 from server.utils.context import build_yellowpages_context
+from server.utils.pagination import offset
 
 templates = Jinja2Templates(directory="server/templates")
 router = APIRouter()
@@ -24,11 +25,11 @@ def yellowpages(
     db: Session = Depends(get_db)
 ):
     user = get_optional_user(access_token, db)
-    offset = (page - 1) * limit
+    offset_value = offset(page, limit)
 
     if q:
         entries, total = SharedEntryService.search_public_entries_fts(
-            db, query=q, limit=limit, offset=offset
+            db, query=q, limit=limit, offset=offset_value
         )
     else:
         entries, total = EntryFilter.get_entries(

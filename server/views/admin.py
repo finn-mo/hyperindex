@@ -9,6 +9,7 @@ from server.services.admin import AdminEntryService
 from server.services.shared import SharedEntryService
 from server.security import get_db, require_admin
 from server.utils.context import build_admin_panel_context
+from server.utils.pagination import offset
 
 templates = Jinja2Templates(directory="server/templates")
 router = APIRouter()
@@ -24,9 +25,9 @@ def admin_panel(
     user: User = Depends(require_admin),
     db: Session = Depends(get_db),
 ):
-    offset_pending = (page_pending - 1) * limit
-    offset_public = (page_public - 1) * limit
-    offset_deleted = (page_deleted - 1) * limit
+    offset_pending = offset(page_pending, limit)
+    offset_public = offset(page_public, limit)
+    offset_deleted = offset(page_deleted, limit)
 
     pending_entries, total_pending = AdminEntryService.get_pending_submissions(db, limit=limit, offset=offset_pending)
     public_entries, total_public = AdminEntryService.get_public_entries(db, limit=limit, offset=offset_public)
