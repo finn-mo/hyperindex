@@ -1,0 +1,24 @@
+{% macro action_button(label, url, icon=None, method="POST", confirm=None, hidden_inputs=None, disabled=False, aria_label=None) %}
+  <form method="{{ method }}" action="{{ url }}" {% if confirm %}onsubmit="return confirm('{{ confirm }}');"{% endif %}>
+    {% if hidden_inputs %}
+      {% for name, value in hidden_inputs.items() %}
+        <input type="hidden" name="{{ name }}" value="{{ value }}">
+      {% endfor %}
+    {% endif %}
+    <button type="submit" {% if disabled %}disabled{% endif %} aria-label="{{ aria_label or label }}">
+      {% if icon %}<i class="{{ icon }}"></i>{% endif %}{{ label }}
+    </button>
+  </form>
+{% endmacro %}
+
+{% macro status_badge(status) %}
+  <span class="badge badge-{{ status|lower }}">{{ status }}</span>
+{% endmacro %}
+
+{% macro render_tags(tags) %}
+  <ul class="tag-list">
+    {% for tag in tags %}
+      <li class="tag">{{ tag }}</li>
+    {% endfor %}
+  </ul>
+{% endmacro %}

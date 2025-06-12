@@ -1,17 +1,7 @@
+{% from 'partials/macros.html' import action_button %}
+
 <div class="actions">
-  <form method="GET" action="/entries/{{ entry.id }}/edit">
-    <button aria-label="Edit this entry">Edit</button>
-  </form>
-
-  <form method="POST" action="/entries/{{ entry.id }}/delete" onsubmit="return confirm('Are you sure you want to delete this entry?');">
-    <button aria-label="Delete this entry">Delete</button>
-  </form>
-
-  <form method="POST" action="/entries/{{ entry.id }}/submit">
-    <button 
-      aria-label="Submit this entry to Yellowpages"
-      {% if entry.submitted_to_public or entry.is_public_copy %}disabled{% endif %}>
-      Submit to Yellowpages
-    </button>
-  </form>
+  {{ action_button("Edit", "/entries/" ~ entry.id ~ "/edit", method="GET", aria_label="Edit this entry") }}
+  {{ action_button("Delete", "/entries/" ~ entry.id ~ "/delete", confirm="Are you sure you want to delete this entry?", aria_label="Delete this entry") }}
+  {{ action_button("Submit to Yellowpages", "/entries/" ~ entry.id ~ "/submit", disabled=entry.submitted_to_public or entry.is_public_copy, aria_label="Submit this entry to Yellowpages") }}
 </div>

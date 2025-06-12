@@ -58,8 +58,8 @@ server/
 ├── templates/      # Jinja2 templates for HTML rendering
 ├── static/         # CSS and other frontend assets
 ├── models/         # SQLAlchemy + Pydantic models (entities, schemas)
-├── services/       # Business logic (e.g., EntryService, FTS-backed search)
-├── utils/          # Shared helpers (e.g., tag parsing)
+├── services/       # Business logic (e.g., entry services, FTS-backed search)
+├── utils/          # Shared helpers (e.g., build_context)
 ├── db/             # Database connection setup
 ├── security.py     # Auth + token creation/verification
 └── settings.py     # Environment config (uses pydantic-settings)
