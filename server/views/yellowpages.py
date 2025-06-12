@@ -24,6 +24,24 @@ def yellowpages(
     access_token: Optional[str] = Cookie(None),
     db: Session = Depends(get_db)
 ):
+    """
+    Render the public Yellow Pages directory.
+
+    Supports optional full-text search (`q`) and tag filtering (`tag`) with pagination.
+    Uses access token (if present) to identify optional user for context rendering.
+
+    Args:
+        request (Request): Incoming HTTP request object for template rendering.
+        q (Optional[str]): Full-text search query.
+        tag (Optional[str]): Tag filter for narrowing results.
+        page (int): Page number for pagination (1-based).
+        limit (int): Number of entries per page.
+        access_token (Optional[str]): JWT token for optional user context.
+        db (Session): Database session dependency.
+
+    Returns:
+        HTMLResponse: Rendered Yellow Pages listing with entries and filters applied.
+    """
     user = get_optional_user(access_token, db)
     offset_value = offset(page, limit)
 

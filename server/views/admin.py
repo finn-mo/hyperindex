@@ -25,6 +25,24 @@ def admin_panel(
     user: User = Depends(require_admin),
     db: Session = Depends(get_db),
 ):
+    """
+    Render the admin moderation dashboard.
+
+    Displays three paginated tabs: pending submissions, public entries, and deleted items.
+    Only accessible to users with admin privileges.
+
+    Args:
+        request (Request): Incoming HTTP request.
+        page_pending (int): Page index for pending submissions tab.
+        page_public (int): Page index for public entries tab.
+        page_deleted (int): Page index for deleted entries tab.
+        limit (int): Number of entries per page.
+        user (User): Authenticated admin user.
+        db (Session): Database session.
+
+    Returns:
+        HTMLResponse: Rendered admin panel with tabbed entry lists.
+    """
     offset_pending = offset(page_pending, limit)
     offset_public = offset(page_public, limit)
     offset_deleted = offset(page_deleted, limit)
@@ -62,6 +80,23 @@ def approve_entry(
     db: Session = Depends(get_db),
     user: User = Depends(require_admin)
 ):
+    """
+    Approve a submitted entry for public listing.
+
+    Forks the user entry into a new admin-managed public entry.
+    Redirects back to the admin panel with tab and pagination preserved.
+
+    Args:
+        entry_id (int): ID of the user-submitted entry.
+        page_pending (int): Current pending page (for redirect).
+        page_public (int): Current public page (for redirect).
+        active_tab (str): Which tab was active before action.
+        db (Session): Database session.
+        user (User): Authenticated admin user.
+
+    Returns:
+        RedirectResponse: Redirect to admin panel with tab context.
+    """
     AdminEntryService.approve_entry(db, entry_id, user)
     return RedirectResponse(
         f"/admin?page_pending={page_pending}&page_public={page_public}#tab-{active_tab}",
@@ -78,6 +113,22 @@ def reject_entry(
     db: Session = Depends(get_db),
     user: User = Depends(require_admin)
 ):
+    """
+    Reject a submitted entry, marking it as reviewed but not published.
+
+    Removes it from the pending list without creating a public copy.
+
+    Args:
+        entry_id (int): ID of the entry to reject.
+        page_pending (int): Current pending page (for redirect).
+        page_public (int): Current public page (for redirect).
+        active_tab (str): Which tab was active before action.
+        db (Session): Database session.
+        user (User): Authenticated admin user.
+
+    Returns:
+        RedirectResponse: Redirect to admin panel with tab context.
+    """
     AdminEntryService.reject_entry(db, entry_id)
     return RedirectResponse(
         f"/admin?page_pending={page_pending}&page_public={page_public}#tab-{active_tab}",
@@ -92,6 +143,18 @@ def edit_admin_entry_form(
     db: Session = Depends(get_db),
     user: User = Depends(require_admin)
 ):
+    """
+    Render the edit form for a public (admin-owned) entry.
+
+    Args:
+        entry_id (int): ID of the public entry to edit.
+        request (Request): HTTP request context.
+        db (Session): Database session.
+        user (User): Authenticated admin user.
+
+    Returns:
+        HTMLResponse: Rendered edit form with pre-filled entry data.
+    """
     entry = AdminEntryService.get_entry_for_edit(db, entry_id)
 
     return templates.TemplateResponse("edit_entry_admin.html", {
@@ -108,6 +171,20 @@ async def update_admin_entry(
     db: Session = Depends(get_db),
     user: User = Depends(require_admin)
 ):
+    """
+    Process updates to an existing public entry.
+
+    Overwrites admin-managed entry metadata based on form input.
+
+    Args:
+        entry_id (int): ID of the entry to update.
+        request (Request): Incoming form data request.
+        db (Session): Database session.
+        user (User): Authenticated admin user.
+
+    Returns:
+        RedirectResponse: Redirect to public entries tab.
+    """
     form_data = await request.form()
     title = form_data.get("title", "").strip()
     url = form_data.get("url", "").strip()
@@ -134,6 +211,21 @@ async def delete_admin_entry(
     db: Session = Depends(get_db),
     user: User = Depends(require_admin)
 ):
+
+    """
+    Soft-delete a public entry from the Yellow Pages.
+
+    Removes it from public listing but retains it in the deleted tab for possible restoration.
+
+    Args:
+        entry_id (int): ID of the public entry to delete.
+        request (Request): Incoming form data.
+        db (Session): Database session.
+        user (User): Authenticated admin user.
+
+    Returns:
+        RedirectResponse: Redirect to admin panel with tab context.
+    """
     form_data = await request.form()
     page_pending = form_data.get("page_pending", "1")
     page_public = form_data.get("page_public", "1")
@@ -152,6 +244,20 @@ async def restore_admin_entry(
     db: Session = Depends(get_db),
     user: User = Depends(require_admin)
 ):
+    """
+    Restore a previously deleted public entry.
+
+    Makes the entry visible again in the public Yellow Pages tab.
+
+    Args:
+        entry_id (int): ID of the entry to restore.
+        request (Request): Incoming form data.
+        db (Session): Database session.
+        user (User): Authenticated admin user.
+
+    Returns:
+        RedirectResponse: Redirect to admin panel with tab context.
+    """
     form_data = await request.form()
     page_deleted = form_data.get("page_deleted", "1")
     page_pending = form_data.get("page_pending", "1")
@@ -174,6 +280,20 @@ async def purge_admin_entry(
     db: Session = Depends(get_db),
     user: User = Depends(require_admin)
 ):
+    """
+    Permanently purge a deleted entry from the system.
+
+    Irreversibly removes admin-managed entry from the database.
+
+    Args:
+        entry_id (int): ID of the deleted entry to purge.
+        request (Request): Incoming form data.
+        db (Session): Database session.
+        user (User): Authenticated admin user.
+
+    Returns:
+        RedirectResponse: Redirect to admin panel with tab context.
+    """
     form_data = await request.form()
     page_deleted = form_data.get("page_deleted", "1")
     page_pending = form_data.get("page_pending", "1")

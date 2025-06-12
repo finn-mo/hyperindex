@@ -28,6 +28,24 @@ def rolodex(
     user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
+    """
+    Render the user's private Rolodex view.
+
+    Supports optional full-text search (`q`) and tag filtering (`tag`) with pagination.
+    Displays user-specific saved entries and personal tags.
+
+    Args:
+        request (Request): HTTP request object for rendering.
+        tag (Optional[str]): Filter entries by tag.
+        q (Optional[str]): Full-text query string.
+        page (int): Current pagination page (1-indexed).
+        limit (int): Number of entries per page.
+        user (User): Authenticated user via dependency injection.
+        db (Session): SQLAlchemy database session.
+
+    Returns:
+        HTMLResponse: Rendered template with user entries and filters applied.
+    """
     offset_value = offset(page, limit)
 
     if q:
@@ -63,6 +81,16 @@ def rolodex(
 
 @router.get("/entries/new", response_class=HTMLResponse)
 def new_entry_form(request: Request, user: User = Depends(get_current_user)):
+    """
+    Render the new entry creation form for authenticated users.
+
+    Args:
+        request (Request): HTTP request for rendering context.
+        user (User): Authenticated user from session.
+
+    Returns:
+        HTMLResponse: Rendered template for entry creation.
+    """
     return templates.TemplateResponse(request, "new_entry.html", {"user": user})
 
 
@@ -75,6 +103,23 @@ def create_entry_from_form(
     user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
+    """
+    Process form submission to create a new personal entry.
+
+    Parses and sanitizes input fields, creates entry with user ownership,
+    and redirects to the Rolodex view.
+
+    Args:
+        url (str): URL of the resource.
+        title (str): Title of the entry.
+        tags (str): Comma-separated tags string.
+        notes (str): Optional notes.
+        user (User): Authenticated user.
+        db (Session): Database session.
+
+    Returns:
+        RedirectResponse: Redirect to Rolodex after creation.
+    """
     tag_list = [t.strip() for t in tags.split(",") if t.strip()]
     entry_in = EntryCreate(url=url, title=title, notes=notes, tags=tag_list)
     UserEntryService.create_entry(db, entry_in, user.id)
@@ -88,6 +133,20 @@ def edit_entry_form(
     user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
+    """
+    Render the entry editing form for a specific entry.
+
+    Verifies user ownership before rendering. Raises 404 if not found.
+
+    Args:
+        entry_id (int): ID of the entry to edit.
+        request (Request): HTTP request object.
+        user (User): Authenticated user.
+        db (Session): Database session.
+
+    Returns:
+        HTMLResponse: Rendered edit form template.
+    """
     entry = SharedEntryService.get_entry_by_id(db, entry_id, user.id)
     if not entry:
         raise HTTPException(status_code=404, detail="Entry not found")
@@ -105,6 +164,23 @@ def edit_entry(
     user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
+    """
+    Process updates to an existing personal entry.
+
+    Validates user access and applies updates via service layer.
+
+    Args:
+        entry_id (int): ID of the entry to update.
+        title (str): Updated title.
+        url (str): Updated URL.
+        notes (str): Optional notes.
+        tags (str): Updated comma-separated tags.
+        user (User): Authenticated user.
+        db (Session): Database session.
+
+    Returns:
+        RedirectResponse: Redirect to Rolodex or Admin view.
+    """
     tag_list = [t.strip() for t in tags.split(",") if t.strip()]
     entry_data = EntryCreate(title=title, url=url, notes=notes, tags=tag_list)
     
@@ -122,7 +198,19 @@ def delete_entry(
     user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
+    """
+    Soft-delete a personal entry owned by the user.
 
+    Marks the entry as deleted. Redirects based on role.
+
+    Args:
+        entry_id (int): ID of the entry to delete.
+        user (User): Authenticated user.
+        db (Session): Database session.
+
+    Returns:
+        RedirectResponse: Redirect to Rolodex or Admin view.
+    """
     UserEntryService.soft_delete_entry(db, entry_id, user.id)
 
     return RedirectResponse(
@@ -137,5 +225,18 @@ def submit_entry_for_review(
     user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
+    """
+    Submit a personal entry to the public directory for review.
+
+    Marks entry for admin review queue. No changes to ownership or data.
+
+    Args:
+        entry_id (int): ID of the entry to submit.
+        user (User): Authenticated user.
+        db (Session): Database session.
+
+    Returns:
+        RedirectResponse: Redirect to Rolodex after submission.
+    """
     UserEntryService.submit_for_review(db, entry_id, user.id)
     return RedirectResponse("/rolodex", status_code=302)

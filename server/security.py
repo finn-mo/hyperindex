@@ -101,6 +101,23 @@ def get_optional_user(access_token: Optional[str], db: Session) -> Optional[User
         return None
     
 def require_admin(user: User = Depends(get_current_user)) -> User:
+    """
+    Dependency that enforces admin-level access.
+
+    Retrieves the current authenticated user and raises an HTTP 403 error
+    if the user is not marked as an admin.
+
+    Used to protect routes that should only be accessible by administrators.
+
+    Args:
+        user (User): The authenticated user, injected via `get_current_user`.
+
+    Raises:
+        HTTPException: If the user is not an admin.
+
+    Returns:
+        User: The same user object if admin check passes.
+    """
     if not user.is_admin:
         raise HTTPException(status_code=403, detail="Admin access required")
     return user
