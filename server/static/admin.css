@@ -14,17 +14,6 @@
   border-bottom: 1px solid #88a;
 }
 
-/* Form styling */
-.theme-admin form {
-  background: #e2f1f4;
-  padding: 0.5rem;
-  border: 1px solid #aac;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.25rem;
-  align-items: center;
-}
-
 /* Buttons */
 .theme-admin button,
 .theme-admin .clear-btn,
@@ -89,4 +78,9 @@
 .theme-admin textarea:focus {
   outline: 2px solid #5595a8;
   background-color: #f5ffff;
+}
+
+/* Tabs */
+.theme-admin .tabs-nav button:hover {
+  background: #ececec;
 }

@@ -4,21 +4,6 @@
 
 {% block extra_css %}
   <link rel="stylesheet" href="{{ url_for('static', path='admin.css') }}">
-  <style>
-    .tabs-nav { display: flex; gap: 1rem; margin-bottom: 1rem; }
-    .tabs-nav button {
-      padding: 0.5rem 1rem;
-      font-weight: bold;
-      border: none;
-      background: #ddd;
-      cursor: pointer;
-    }
-    .tabs-nav button.active {
-      background: #bbb;
-    }
-    .tab-content { display: none; }
-    .tab-content.active { display: block; }
-  </style>
 {% endblock %}
 
 {% block body_class %}theme-admin{% endblock %}
@@ -34,7 +19,7 @@
   </div>
 
   <section id="tab-pending" class="tab-content active" aria-labelledby="pending-heading">
-    <h2 id="pending-heading">Pending Submissions</h2>
+    <h2 id="pending-heading" class="sr-only">Pending Submissions</h2>
     {% for entry in pending_entries %}
       {% set show_admin_actions = True %}
       {% include "partials/_entry_card.html" with context %}
@@ -51,7 +36,7 @@
   </section>
 
   <section id="tab-public" class="tab-content" aria-labelledby="public-heading">
-    <h2 id="public-heading">Public Entries (Yellowpages)</h2>
+    <h2 id="public-heading" class="sr-only">Public Entries (Yellowpages)</h2>
     {% for entry in public_entries %}
       {% set show_admin_actions = True %}
       {% include "partials/_entry_card.html" with context %}
@@ -68,7 +53,7 @@
   </section>
 
 <section id="tab-deleted" class="tab-content" aria-labelledby="deleted-heading">
-  <h2 id="deleted-heading">Deleted Entries</h2>
+  <h2 id="deleted-heading" class="sr-only">Deleted Entries</h2>
   {% for entry in deleted_entries %}
     {% set show_admin_actions = True %}
     {% set page_pending = page_pending %}
@@ -95,10 +80,15 @@
     function switchTo(tab) {
       buttons.forEach(b => b.classList.remove('active'));
       tabs.forEach(t => t.classList.remove('active'));
+
       document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
       document.getElementById(`tab-${tab}`).classList.add('active');
+
       window.location.hash = `tab-${tab}`;
+
+      window.scrollTo({ top: 0, behavior: 'instant' });
     }
+
 
     buttons.forEach(btn => {
       btn.addEventListener('click', () => switchTo(btn.dataset.tab));

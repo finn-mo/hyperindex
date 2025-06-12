@@ -193,6 +193,34 @@ button:disabled,
   gap: 0.5rem;
 }
 
+/* Tabs */
+.tabs-nav {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.tabs-nav button {
+  font-size: 1.1rem;   /* match h2 */
+  font-weight: bold;
+  font-family: inherit;
+  text-transform: uppercase;
+  color: #3a2f1f;
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+}
+
+.tabs-nav button.active {
+  background: #ececec;
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
 /* Links */
 a {
   text-decoration: none;

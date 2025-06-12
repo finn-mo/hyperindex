@@ -14,17 +14,6 @@
   color: #b30000;
 }
 
-/* Form theme */
-.theme-yellowpages form {
-  background: #fff8c6;
-  padding: 0.5rem;
-  border: 1px solid #aaa;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.25rem;
-  align-items: center;
-}
-
 /* Button theme */
 .theme-yellowpages button,
 .theme-yellowpages .clear-btn {
