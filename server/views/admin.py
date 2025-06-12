@@ -71,7 +71,7 @@ def admin_panel(
 
 
 
-@router.post("/admin/approve/{entry_id}")
+@router.post("/admin/{entry_id}/approve")
 def approve_entry(
     entry_id: int,
     page_pending: int = Query(1),
@@ -104,7 +104,7 @@ def approve_entry(
     )
 
 
-@router.post("/admin/reject/{entry_id}")
+@router.post("/admin/{entry_id}/reject")
 def reject_entry(
     entry_id: int,
     page_pending: int = Query(1),
@@ -136,7 +136,7 @@ def reject_entry(
     )
 
 
-@router.get("/admin/edit/{entry_id}", response_class=HTMLResponse)
+@router.get("/admin/{entry_id}/edit", response_class=HTMLResponse)
 def edit_admin_entry_form(
     entry_id: int,
     request: Request,
@@ -164,7 +164,7 @@ def edit_admin_entry_form(
     })
 
 
-@router.post("/admin/edit/{entry_id}")
+@router.post("/admin/{entry_id}/edit")
 async def update_admin_entry(
     entry_id: int,
     request: Request,
@@ -204,7 +204,7 @@ async def update_admin_entry(
     return RedirectResponse("/admin#tab-public", status_code=302)
 
 
-@router.post("/admin/delete/{entry_id}")
+@router.post("/admin/{entry_id}/delete")
 async def delete_admin_entry(
     entry_id: int,
     request: Request,
@@ -237,7 +237,7 @@ async def delete_admin_entry(
     return RedirectResponse(redirect_url, status_code=302)
 
 
-@router.post("/admin/restore/{entry_id}")
+@router.post("/admin/{entry_id}/restore")
 async def restore_admin_entry(
     entry_id: int,
     request: Request,
@@ -273,7 +273,7 @@ async def restore_admin_entry(
     return RedirectResponse(redirect_url, status_code=302)
 
 
-@router.post("/admin/purge/{entry_id}")
+@router.post("/admin/{entry_id}/purge")
 async def purge_admin_entry(
     entry_id: int,
     request: Request,

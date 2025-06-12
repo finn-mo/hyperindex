@@ -90,7 +90,7 @@ def rolodex(
     )
 
 
-@router.get("/entries/new", response_class=HTMLResponse)
+@router.get("/rolodex/new", response_class=HTMLResponse)
 def new_entry_form(request: Request, user: User = Depends(get_current_user)):
     """
     Render the new entry creation form for authenticated users.
@@ -105,7 +105,7 @@ def new_entry_form(request: Request, user: User = Depends(get_current_user)):
     return templates.TemplateResponse(request, "new_entry.html", {"user": user})
 
 
-@router.post("/entries/new")
+@router.post("/rolodex/new")
 def create_entry_from_form(
     url: str = Form(...),
     title: str = Form(...),
@@ -137,7 +137,7 @@ def create_entry_from_form(
     return RedirectResponse("/rolodex", status_code=303)
 
 
-@router.get("/entries/{entry_id}/edit", response_class=HTMLResponse)
+@router.get("/rolodex/{entry_id}/edit", response_class=HTMLResponse)
 def edit_entry_form(
     entry_id: int,
     request: Request,
@@ -165,7 +165,7 @@ def edit_entry_form(
     return templates.TemplateResponse(request, "edit_entry.html", {"entry": entry})
 
 
-@router.post("/entries/{entry_id}/edit")
+@router.post("/rolodex/{entry_id}/edit")
 def edit_entry(
     entry_id: int,
     title: str = Form(...),
@@ -200,7 +200,7 @@ def edit_entry(
     return RedirectResponse("/rolodex", status_code=302)
 
 
-@router.post("/entries/{entry_id}/delete")
+@router.post("/rolodex/{entry_id}/delete")
 def delete_entry(
     entry_id: int,
     user: User = Depends(get_current_user),
@@ -221,13 +221,10 @@ def delete_entry(
     """
     UserEntryService.soft_delete_entry(db, entry_id, user.id)
 
-    return RedirectResponse(
-        "/admin" if user.is_admin else "/rolodex",
-        status_code=302
-    )
+    return RedirectResponse("/rolodex",status_code=302)
 
 
-@router.post("/entries/{entry_id}/submit")
+@router.post("/rolodex/{entry_id}/submit")
 def submit_entry_for_review(
     entry_id: int,
     user: User = Depends(get_current_user),

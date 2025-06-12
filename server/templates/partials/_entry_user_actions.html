@@ -1,7 +1,7 @@
 {% from 'macros/shared.html' import action_button %}
 
 <div class="actions">
-  {{ action_button("Edit", "/entries/" ~ entry.id ~ "/edit", method="GET", aria_label="Edit this entry") }}
-  {{ action_button("Delete", "/entries/" ~ entry.id ~ "/delete", confirm="Are you sure you want to delete this entry?", aria_label="Delete this entry") }}
-  {{ action_button("Submit to Yellowpages", "/entries/" ~ entry.id ~ "/submit", disabled=entry.submitted_to_public or entry.is_public_copy, aria_label="Submit this entry to Yellowpages") }}
+  {{ action_button("Edit", "/rolodex/" ~ entry.id ~ "/edit", method="GET", aria_label="Edit this entry") }}
+  {{ action_button("Delete", "/rolodex/" ~ entry.id ~ "/delete", confirm="Are you sure you want to delete this entry?", aria_label="Delete this entry") }}
+  {{ action_button("Submit to Yellowpages", "/rolodex/" ~ entry.id ~ "/submit", disabled=entry.submitted_to_public or entry.is_public_copy, aria_label="Submit this entry to Yellowpages") }}
 </div>

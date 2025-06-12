@@ -2,15 +2,15 @@
 
 <div class="actions">
   {% if not entry.is_public_copy %}
-    {{ action_button("Approve", "/admin/approve/" ~ entry.id, hidden_inputs={'page_pending': page_pending, 'page_public': page_public, 'page_deleted': page_deleted, 'active_tab': 'pending'}, aria_label="Approve this submission") }}
-    {{ action_button("Reject", "/admin/reject/" ~ entry.id, hidden_inputs={'page_pending': page_pending, 'page_public': page_public, 'page_deleted': page_deleted, 'active_tab': 'pending'}, aria_label="Reject this submission") }}
+    {{ action_button("Approve", "/admin/" ~ entry.id ~ "/approve", hidden_inputs={'page_pending': page_pending, 'page_public': page_public, 'page_deleted': page_deleted, 'active_tab': 'pending'}, aria_label="Approve this submission") }}
+    {{ action_button("Reject", "/admin/" ~ entry.id ~ "/reject", hidden_inputs={'page_pending': page_pending, 'page_public': page_public, 'page_deleted': page_deleted, 'active_tab': 'pending'}, aria_label="Reject this submission") }}
   {% else %}
     {% if not entry.is_deleted %}
-      {{ action_button("Edit", "/admin/edit/" ~ entry.id, method="GET", aria_label="Edit this public entry") }}
-      {{ action_button("Delete", "/admin/delete/" ~ entry.id, confirm="Are you sure you want to delete this entry?", hidden_inputs={'page_pending': page_pending, 'page_public': page_public, 'active_tab': 'public'}, aria_label="Delete this entry") }}
+      {{ action_button("Edit", "/admin/" ~ entry.id ~ "/edit", method="GET", aria_label="Edit this public entry") }}
+      {{ action_button("Delete", "/admin/" ~ entry.id ~ "/delete", confirm="Are you sure you want to delete this entry?", hidden_inputs={'page_pending': page_pending, 'page_public': page_public, 'active_tab': 'public'}, aria_label="Delete this entry") }}
     {% else %}
-      {{ action_button("Restore", "/admin/restore/" ~ entry.id, hidden_inputs={'page_deleted': page_deleted, 'page_pending': page_pending, 'page_public': page_public, 'active_tab': 'deleted'}, aria_label="Restore this entry") }}
-      {{ action_button("Purge", "/admin/purge/" ~ entry.id, confirm="Permanently delete this entry?", hidden_inputs={'page_deleted': page_deleted, 'page_pending': page_pending, 'page_public': page_public, 'active_tab': 'deleted'}, aria_label="Purge this entry") }}
+      {{ action_button("Restore", "/admin/" ~ entry.id ~ "/restore", hidden_inputs={'page_deleted': page_deleted, 'page_pending': page_pending, 'page_public': page_public, 'active_tab': 'deleted'}, aria_label="Restore this entry") }}
+      {{ action_button("Purge", "/admin/" ~ entry.id ~ "/purge", confirm="Permanently delete this entry?", hidden_inputs={'page_deleted': page_deleted, 'page_pending': page_pending, 'page_public': page_public, 'active_tab': 'deleted'}, aria_label="Purge this entry") }}
     {% endif %}
   {% endif %}
 </div>
