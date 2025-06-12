@@ -50,7 +50,7 @@ class SharedEntryService:
                 WHERE entry_fts MATCH :query
             ) fts
             JOIN entries e ON e.id = fts.rowid
-            WHERE e.is_public_copy = 1
+            WHERE e.is_public_copy = 1 AND e.is_deleted = 0
             ORDER BY e.id DESC
             LIMIT :limit OFFSET :offset
         """)
@@ -79,7 +79,7 @@ class SharedEntryService:
                 WHERE entry_fts MATCH :query
             ) fts
             JOIN entries e ON e.id = fts.rowid
-            WHERE e.is_public_copy = 1
+            WHERE e.is_public_copy = 1 AND e.is_deleted = 0
         """)
         total = db.execute(count_sql, {"query": query}).scalar()
 
