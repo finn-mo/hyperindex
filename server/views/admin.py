@@ -6,6 +6,7 @@ from fastapi.templating import Jinja2Templates
 from server.models.entities import Entry, User
 from server.models.schemas import EntryCreate
 from server.services.admin import AdminEntryService
+from server.services.shared import SharedEntryService
 from server.security import get_db, require_admin
 from server.utils.context import build_admin_panel_context
 
@@ -158,7 +159,7 @@ async def restore_admin_entry(
     page_public = form_data.get("page_public", "1")
     active_tab = form_data.get("active_tab", "deleted")
 
-    AdminEntryService.restore_entry(db, entry_id)
+    SharedEntryService.restore_entry(db, entry_id)
 
     redirect_url = (
         f"/admin?page_pending={page_pending}&page_public={page_public}"

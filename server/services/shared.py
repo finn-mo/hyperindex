@@ -1,7 +1,8 @@
 from typing import List, Optional, Tuple
+
+from fastapi import HTTPException
 from sqlalchemy import or_, text
 from sqlalchemy.orm import Session, joinedload
-
 from sqlalchemy.exc import NoResultFound
 
 from server.models.entities import Entry, Tag
@@ -84,6 +85,17 @@ class SharedEntryService:
 
         return entries, total
     
+    @staticmethod
+    def restore_entry(db: Session, entry_id: int) -> None:
+        entry = db.get(Entry, entry_id)
+        if not entry or not entry.is_public_copy or not entry.is_deleted:
+            raise HTTPException(status_code=404, detail="Cannot restore entry")
+
+        entry.is_deleted = False
+        entry.deleted_at = None
+        db.commit()
+
+
 class EntryFilter:
     """Flexible entry filter with tag, text, and user/public options."""
     def __init__(self, db_session, base_query):

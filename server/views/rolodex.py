@@ -9,7 +9,7 @@ from server.security import get_current_user, get_db
 from server.models.entities import User, Entry, Tag
 from server.models.schemas import EntryCreate
 from server.services.user import UserEntryService
-from server.services.shared import EntryFilter
+from server.services.shared import EntryFilter, SharedEntryService
 from server.utils.context import build_rolodex_context
 
 
@@ -95,7 +95,7 @@ def edit_entry_form(
 ):
     entry = (
         db.get(Entry, entry_id)
-        if user.is_admin else UserEntryService.get_entry_by_id(db, entry_id, user.id)
+        if user.is_admin else SharedEntryService.get_entry_by_id(db, entry_id, user.id)
     )
     if not entry:
         raise HTTPException(status_code=404, detail="Entry not found")
@@ -145,14 +145,5 @@ def submit_entry_for_review(
     user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    entry = UserEntryService.get_entry_by_id(db, entry_id, user.id)
-    if not entry or entry.is_deleted:
-        raise HTTPException(status_code=404, detail="Entry not found")
-    if entry.is_public_copy:
-        raise HTTPException(status_code=400, detail="Cannot submit admin-managed entries")
-
-    if not entry.submitted_to_public:
-        entry.submitted_to_public = True
-        db.commit()
-
+    UserEntryService.submit_for_review(db, entry_id, user.id)
     return RedirectResponse("/rolodex", status_code=302)

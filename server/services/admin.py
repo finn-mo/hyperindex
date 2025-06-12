@@ -56,6 +56,7 @@ class AdminEntryService:
         db.refresh(entry)
         return entry
 
+
     @staticmethod
     def delete_entry(db: Session, entry_id: int) -> None:
         entry = db.get(Entry, entry_id)
@@ -64,16 +65,6 @@ class AdminEntryService:
 
         entry.deleted_at = datetime.now(timezone.utc)
         entry.is_deleted = True
-        db.commit()
-
-    @staticmethod
-    def restore_entry(db: Session, entry_id: int) -> None:
-        entry = db.get(Entry, entry_id)
-        if not entry or not entry.is_public_copy or not entry.is_deleted:
-            raise HTTPException(status_code=404, detail="Cannot restore entry")
-
-        entry.is_deleted = False
-        entry.deleted_at = None
         db.commit()
 
     @staticmethod

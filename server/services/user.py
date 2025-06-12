@@ -1,26 +1,15 @@
 from datetime import datetime, timezone
 from typing import List, Tuple
 
-from sqlalchemy.orm import Session
 from fastapi import HTTPException
+from sqlalchemy.orm import Session
 
 from server.models.entities import Entry
 from server.models.schemas import EntryCreate
-from server.services.shared import TagService
+from server.services.shared import SharedEntryService, TagService
 
 
 class UserEntryService:
-    @staticmethod
-    def get_entry_by_id(db: Session, entry_id: int, user_id: int) -> Entry:
-        entry = (
-            db.query(Entry)
-            .filter(Entry.id == entry_id, Entry.user_id == user_id)
-            .first()
-        )
-        if not entry:
-            raise HTTPException(status_code=404, detail="Entry not found or access denied")
-        return entry
-
     @staticmethod
     def create_entry(db: Session, entry_in: EntryCreate, user_id: int) -> Entry:
         tags = TagService.resolve_tags(db, entry_in.tags or [])
@@ -39,7 +28,7 @@ class UserEntryService:
 
     @staticmethod
     def update_entry(db: Session, entry_id: int, user_id: int, data: EntryCreate) -> Entry:
-        entry = UserEntryService.get_entry_by_id(db, entry_id, user_id)
+        entry = SharedEntryService.get_entry_by_id(db, entry_id, user_id)
         entry.url = data.url
         entry.title = data.title
         entry.notes = data.notes
@@ -50,15 +39,20 @@ class UserEntryService:
 
     @staticmethod
     def soft_delete_entry(db: Session, entry_id: int, user_id: int) -> None:
-        entry = UserEntryService.get_entry_by_id(db, entry_id, user_id)
+        entry = SharedEntryService.get_entry_by_id(db, entry_id, user_id)
         entry.is_deleted = True
         db.commit()
 
     @staticmethod
-    def restore_entry(db: Session, entry_id: int, user_id: int) -> None:
-        entry = UserEntryService.get_entry_by_id(db, entry_id, user_id)
-        entry.is_deleted = False
-        db.commit()
+    def submit_for_review(db: Session, entry_id: int, user_id: int) -> None:
+        entry = SharedEntryService.get_entry_by_id(db, entry_id, user_id)
+        if entry.is_deleted:
+            raise HTTPException(status_code=404, detail="Entry not found")
+        if entry.is_public_copy:
+            raise HTTPException(status_code=400, detail="Cannot submit admin-managed entries")
+        if not entry.submitted_to_public:
+            entry.submitted_to_public = True
+            db.commit()
 
     @staticmethod
     def search_entries(
