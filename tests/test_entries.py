@@ -1,5 +1,6 @@
 from server.models.schemas import EntryCreate
-from server.services.shared import EntryService
+from server.services.user import UserEntryService
+from server.services.shared import EntryQueryService
 
 
 def test_create_entry(db_session, test_user):
@@ -10,7 +11,7 @@ def test_create_entry(db_session, test_user):
         notes="A test entry",
         tags=["test", "example"]
     )
-    entry = EntryService.create_entry(db_session, entry_data, test_user.id)
+    entry = UserEntryService.create_entry(db_session, entry_data, test_user.id)
 
     assert entry.id is not None
     assert entry.user_id == test_user.id
@@ -22,18 +23,17 @@ def test_create_entry(db_session, test_user):
 
 def test_filter_entries_by_tag(db_session, test_user):
     """Ensure that filtering by tag only returns matching entries."""
-    EntryService.create_entry(
+    UserEntryService.create_entry(
         db_session,
         EntryCreate(url="http://one", title="One", notes="Some notes", tags=["alpha"]),
         test_user.id
     )
-    EntryService.create_entry(
+    UserEntryService.create_entry(
         db_session,
         EntryCreate(url="http://two", title="Two", notes="Some more notes", tags=["beta"]),
         test_user.id
     )
 
-    results, total = EntryService.filter_entries(db_session, user_id=test_user.id, tag="alpha")
+    results, total = EntryQueryService.get_entries(db_session, user_id=test_user.id, tag="alpha")
     assert total == 1
     assert results[0].title == "One"
-

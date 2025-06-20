@@ -5,10 +5,9 @@ from sqlalchemy.orm import sessionmaker
 
 from server.api.main import app
 from server.models.entities import Base, User
-from server.db.connection import get_db  # Now properly located in connection.py
+from server.db.connection import get_db
 from server.security import pwd_context, create_token
 
-# Use in-memory SQLite DB for testing
 TEST_DATABASE_URL = "sqlite:///:memory:"
 
 # --- Create engine and session factory once per test session ---
@@ -58,3 +57,10 @@ def test_user(db_session):
 @pytest.fixture
 def access_token(test_user):
     return create_token({"sub": test_user.username})
+
+@pytest.fixture
+def admin_token(db_session):
+    admin = User(username="admin", password_hash=pwd_context.hash("adminpass"), is_admin=True)
+    db_session.add(admin)
+    db_session.commit()
+    return create_token({"sub": admin.username})
