@@ -3,7 +3,7 @@ def test_yellowpages_public_view(client):
     response = client.get("/")
     assert response.status_code == 200
     assert "text/html" in response.headers["content-type"]
-    assert "<title>" in response.text  # basic sanity check for HTML content
+    assert "<title>" in response.text
 
 
 def test_rolodex_requires_login(client):

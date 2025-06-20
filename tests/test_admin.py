@@ -6,11 +6,13 @@ from sqlalchemy.orm.exc import NoResultFound
 
 
 def test_pending_list_view_requires_admin(client):
+    """Ensure that non-admin users cannot access the admin dashboard."""
     response = client.get("/admin")
     assert response.status_code in (401, 403)
 
 
 def test_approve_submission_creates_admin_copy(client, db_session, test_user, admin_token):
+    """Verify that approving a user-submitted entry creates a public admin-owned copy."""
     entry_data = EntryCreate(
         url="https://approved.com",
         title="To Approve",
@@ -31,6 +33,7 @@ def test_approve_submission_creates_admin_copy(client, db_session, test_user, ad
 
 
 def test_reject_submission_sets_flag(client, db_session, test_user, admin_token):
+    """Check that rejecting a submission clears its submitted flag."""
     entry_data = EntryCreate(
         url="https://rejected.com",
         title="Reject Me",
@@ -50,6 +53,7 @@ def test_reject_submission_sets_flag(client, db_session, test_user, admin_token)
 
 
 def test_edit_admin_copy_persists_changes(client, db_session, admin_token):
+    """Ensure that edits to a public admin-managed entry are saved to the database."""
     admin_entry = Entry(
         url="https://editme.com",
         title="Edit Me",
@@ -74,6 +78,7 @@ def test_edit_admin_copy_persists_changes(client, db_session, admin_token):
 
 
 def test_delete_and_restore_admin_entry(client, db_session, admin_token):
+    """Test that admin entries can be soft-deleted and restored correctly."""
     admin_entry = Entry(
         url="https://deletable.com",
         title="Deletable",
@@ -99,6 +104,7 @@ def test_delete_and_restore_admin_entry(client, db_session, admin_token):
 
 
 def test_permanent_purge_removes_admin_entry(client, db_session, admin_token):
+    """Confirm that purging a soft-deleted public entry removes it from the database."""
     admin_entry = Entry(
         url="https://purge.com",
         title="Purge",
